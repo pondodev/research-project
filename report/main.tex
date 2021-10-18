@@ -1,0 +1,127 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{fancyvrb}
+\graphicspath{{./images}}
+
+\title{COS30031 Games Programming\\Research Project Report}
+\author{Daniel Coady 102084174}
+\date{18/10/2021}
+
+\begin{document}
+
+\maketitle
+
+\pagebreak
+
+\tableofcontents
+
+\pagebreak
+
+% TODO: come back to this once we have a conclusion written
+\begin{abstract}
+    Put the abstract here once we actually have one!
+\end{abstract}
+
+\section{Introduction}
+\subsection{Background}
+Game architecture is an art, one that is truly hard to learn and master. In
+fact, there are many experts and experienced developers who disagree all the
+time on the topic of how the backbone of games should be structured. This
+happens for a variety of reasons, but more often than not we will see two
+aspects of various architectures compared: the usability or maintainability, and
+the performance.
+
+When we talk about the usability or maintainability of something, we refer to
+how easy it is to work with. Of interest to us is the ergonomics related to
+developing with and extending on a given architecture as the needs of a solution
+expands in scope. Performance on the other hand is far more straightforward--how
+fast is it? Both aspects are incredibly important when weighing up which
+architecture is most appropriate to you, your project, and your needs.
+
+\subsection{Purpose of This Research}
+Using the metrics outlined earlier, I aim to compare and contrast four different
+architectures. This will involve deep dives into every architecture, dissecting
+how all of them work and what their purposes are. My hope is that through this
+research presented in this report, the reader may be able to:
+
+\begin{itemize}
+    \item Understand what each architecture is, and how they work
+    \item Understand the purpose of each architecture
+    \item Understand the use case for each architecture
+    \item Come to their own conclusions regarding choices in game architecture
+\end{itemize}
+
+\section{Methodology}
+In order to test the various aspects of each of these architectures, I have had
+to formulate a series of tests and establish a common testing environment for
+each of these tests to be run within.
+
+\subsection{Tests}
+All tests will be done with a simple set of entities. These entities will be
+represented by squares in a graphical window, and they will move with a fixed
+velocity. When an entity reaches the edge of the window, it will then loop back
+around to the other side of the window. To add an extra layer of complexity to
+the processing of the entities, a random amount of entities will also colour
+shift while moving. Data will be tracked in the form of average cycles per
+second and the output provided by valgrind's cachegrind tool.
+
+To ensure we collect as much useful data as possible, I will extend this basis
+for testing in three key ways:
+
+\subsubsection{Static}
+The test will be run with 250,000 entities in the simulation over the course of
+one minute.
+
+\subsubsection{Ramp-up}
+There will be multiple tests run for each architecture, starting at 100,000
+entities and adding 100,000 with each subsequent test until 500,000 entities is
+reached. Each test will be run over the course of one minute.
+
+\subsubsection{Dynamic Ramp-up}
+The same as ramp-up, but will change the amount of entities during runtime of
+the test instead of restarting the test each time. 
+
+\subsection{Environment}
+In order to test each of these architectures, a common environment for them to
+run in has been established. This will take form of a simple front-end
+abstraction I have written on top of the OpenGL 4.3 Core API, using GLFW for
+windowing and other miscellaneous functionality. All code used for the
+environment and development of tests will be written in C++, targeting the C++17
+standard at a maximum. Something to note here is that I have elected to use
+OpenGL 4.3 Core. This is because it is the first version of the OpenGL
+specification to add compute shaders to the core profile, which will become
+important later on for one of our architectures.
+
+% TODO: implement these so i can actually write on them!
+\section{Introduction to Tested Architectures}
+\subsection{Pure Object Oriented}
+
+\subsection{Object Oriented Component Pattern}
+
+\subsection{Entity Component System}
+
+\subsection{Entity Component System With Compute Shaders}
+
+% TODO: collect the data!
+\section{Data}
+\subsection{Pure Object Oriented}
+
+\subsection{Object Oriented Component Pattern}
+
+\subsection{Entity Component System}
+
+\subsection{Entity Component System With Compute Shaders}
+
+\section{Analysis}
+\subsection{Pure Object Oriented}
+
+\subsection{Object Oriented Component Pattern}
+
+\subsection{Entity Component System}
+
+\subsection{Entity Component System With Compute Shaders}
+
+\section{Conclusion}
+
+\end{document}
