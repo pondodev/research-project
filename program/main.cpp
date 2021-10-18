@@ -6,6 +6,7 @@ int main() {
     glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
     glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 3 );
     glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
+    glfwWindowHint( GLFW_DOUBLEBUFFER, GLFW_FALSE );
 
     // create window object
     GLFWwindow* window = glfwCreateWindow(
@@ -45,12 +46,16 @@ int main() {
     Shader visual_shader( "shader.vert", "shader.frag" );
     BatchRenderer renderer;
 
+    TestHarness::init();
+
     while ( !glfwWindowShouldClose( window ) ) {
         // input
         process_input( window );
 
         // update
-        // TODO: update code!
+        if ( TestHarness::update() ) {
+            glfwSetWindowShouldClose( window, true );
+        }
 
         // draw
         renderer.clear( glm::vec3( 0.1f, 0.1f, 0.1f ) );
@@ -78,6 +83,8 @@ int main() {
 
     // clean up resources upon successful exit
     glfwTerminate();
+    auto avg = TestHarness::get_average();
+    std::cout << "average cycles per second: " << avg << std::endl;
 
     return 0;
 }

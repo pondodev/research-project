@@ -14,6 +14,7 @@
 #include "shader.h"
 #include "compute.h"
 #include "batch_renderer.h"
+#include "test_harness.h"
 
 void framebuffer_size_callback( GLFWwindow* window, int width, int height );
 void process_input( GLFWwindow* window );
