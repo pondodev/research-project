@@ -19,8 +19,14 @@
 
 #include "architecture_a/engine.h"
 
+void init_glfw_settings();
 void framebuffer_size_callback( GLFWwindow* window, int width, int height );
 void process_input( GLFWwindow* window );
+
+// test a
+void test_a_static();
+void test_a_ramp_up();
+void test_a_dynamic_ramp_up();
 
 #if DEBUG_ACTIVE
 void GLAPIENTRY gl_message_callback( GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* user_param );

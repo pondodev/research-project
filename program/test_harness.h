@@ -11,6 +11,7 @@ public:
     static void init() {
         start_time = time( 0 );
         time_since_start = 0;
+        cycle_count = 0;
     }
 
     static void clear() {
