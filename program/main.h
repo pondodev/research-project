@@ -11,10 +11,12 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
+#include "consts.h"
 #include "shader.h"
-#include "compute.h"
 #include "batch_renderer.h"
 #include "test_harness.h"
+
+#include "architecture_a/engine.h"
 
 void framebuffer_size_callback( GLFWwindow* window, int width, int height );
 void process_input( GLFWwindow* window );

@@ -6,15 +6,18 @@ fullclean: clean build run
 
 build:
 		g++ \
-		-lglfw \
-		-lGL \
-		-lX11 \
-		-lpthread \
-		-lXrandr \
-		-lXi \
-		-ldl \
-		-I ./include/ \
-		-o $(executable_name) glad.c *.cpp
+			glad.c \
+			*.cpp \
+			architecture_a/*.cpp \
+			-lglfw \
+			-lGL \
+			-lX11 \
+			-lpthread \
+			-lXrandr \
+			-lXi \
+			-ldl \
+			-I ./include/ \
+			-o $(executable_name)
 
 run:
 		./$(executable_name)

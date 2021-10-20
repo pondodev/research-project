@@ -46,6 +46,17 @@ int main() {
     Shader visual_shader( "shader.vert", "shader.frag" );
     BatchRenderer renderer;
 
+    // engine init
+    arch_a::Engine engine;
+
+    for ( int i = 0; i < STATIC_TEST_ENTITY_COUNT; i++ ) {
+        glm::vec2 pos = { rand_f( -1.0, 1.0 ), rand_f( -1.0, 1.0 ) };
+        glm::vec2 vel = { rand_f( -0.01, 0.01 ), rand_f( -0.01, 0.01 ) };
+        glm::vec3 col = { rand_f( 0.0, 1.0 ), rand_f( 0.0, 1.0 ), rand_f( 0.0, 1.0 ) };
+
+        engine.add_entity( pos, vel, col );
+    }
+
     TestHarness::init();
 
     while ( !glfwWindowShouldClose( window ) ) {
@@ -53,6 +64,7 @@ int main() {
         process_input( window );
 
         // update
+        engine.update();
         if ( TestHarness::update() ) {
             glfwSetWindowShouldClose( window, true );
         }
@@ -60,19 +72,15 @@ int main() {
         // draw
         renderer.clear( glm::vec3( 0.1f, 0.1f, 0.1f ) );
 
-        auto x_offset = glm::sin( glfwGetTime() * 2 ) * 0.2;
-        renderer.add_square(
-            glm::vec2( 0.0f + x_offset, 0.0f ),
-            glm::uvec3( 255, 0, 0 ),
-            0.1f );
-        renderer.add_square(
-            glm::vec2( 0.0f + x_offset, 0.5f ),
-            glm::uvec3( 0, 255, 0 ),
-            0.1f );
-        renderer.add_square(
-            glm::vec2( 0.0f + x_offset, -0.5f ),
-            glm::uvec3( 0, 0, 255 ),
-            0.1f );
+        auto entities = engine.get_entities();
+        visual_shader.use();
+        for ( auto e : entities ) {
+            renderer.draw_square(
+                e->get_position(),
+                e->get_color(),
+                0.05f
+            );
+        }
 
         renderer.render( &visual_shader );
 
@@ -204,6 +212,7 @@ void GLAPIENTRY gl_message_callback( GLenum source, GLenum type, GLuint id, GLen
             severity_name = "UNKNOWN";
             break;
     }
+
 
     // print message
     std::cerr << "GL CALLBACK:\n";
