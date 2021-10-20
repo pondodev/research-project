@@ -6,7 +6,7 @@ int main() {
     glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
     glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 3 );
     glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
-    glfwWindowHint( GLFW_DOUBLEBUFFER, GLFW_FALSE );
+    //glfwWindowHint( GLFW_DOUBLEBUFFER, GLFW_FALSE );
 
     // create window object
     GLFWwindow* window = glfwCreateWindow(
@@ -50,11 +50,17 @@ int main() {
     arch_a::Engine engine;
 
     for ( int i = 0; i < STATIC_TEST_ENTITY_COUNT; i++ ) {
+        int color_shift_flag = rand() % 2;
         glm::vec2 pos = { rand_f( -1.0, 1.0 ), rand_f( -1.0, 1.0 ) };
         glm::vec2 vel = { rand_f( -0.01, 0.01 ), rand_f( -0.01, 0.01 ) };
         glm::vec3 col = { rand_f( 0.0, 1.0 ), rand_f( 0.0, 1.0 ), rand_f( 0.0, 1.0 ) };
 
-        engine.add_entity( pos, vel, col );
+        if ( color_shift_flag ) {
+            glm::vec3 col_vel { rand_f( -0.01, 0.01 ), rand_f( -0.01, 0.01 ), rand_f( -0.01, 0.01 ) };
+            engine.add_entity( pos, vel, col, col_vel );
+        } else {
+            engine.add_entity( pos, vel, col );
+        }
     }
 
     TestHarness::init();

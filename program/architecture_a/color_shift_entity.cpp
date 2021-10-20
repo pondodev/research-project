@@ -14,8 +14,8 @@ namespace arch_a {
         if ( color.r > 1.0f ) color.r -= 1.0f;
         if ( color.g > 1.0f ) color.g -= 1.0f;
         if ( color.b > 1.0f ) color.b -= 1.0f;
-        if ( color.r < 1.0f ) color.r += 1.0f;
-        if ( color.g < 1.0f ) color.g += 1.0f;
-        if ( color.b < 1.0f ) color.b += 1.0f;
+        if ( color.r < 0.0f ) color.r += 1.0f;
+        if ( color.g < 0.0f ) color.g += 1.0f;
+        if ( color.b < 0.0f ) color.b += 1.0f;
     }
 }
