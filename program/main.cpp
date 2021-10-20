@@ -6,7 +6,7 @@ int main() {
     glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
     glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 3 );
     glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
-    //glfwWindowHint( GLFW_DOUBLEBUFFER, GLFW_FALSE );
+    glfwWindowHint( GLFW_DOUBLEBUFFER, GLFW_FALSE );
 
     // create window object
     GLFWwindow* window = glfwCreateWindow(
@@ -76,6 +76,7 @@ int main() {
         }
 
         // draw
+        #if RENDERING_ACTIVE
         renderer.clear( glm::vec3( 0.1f, 0.1f, 0.1f ) );
 
         auto entities = engine.get_entities();
@@ -89,6 +90,7 @@ int main() {
         }
 
         renderer.render( &visual_shader );
+        #endif
 
         // poll glfw events and swap buffers
         glfwPollEvents();

@@ -4,6 +4,7 @@
 #define WINDOW_WIDTH 500
 #define WINDOW_HEIGHT 500
 #define DEBUG_ACTIVE false
+#define RENDERING_ACTIVE false
 
 #include <iostream>
 #include <cmath>
