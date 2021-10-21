@@ -14,6 +14,7 @@ namespace arch_b {
         ~Engine();
         void add_entity( Entity* entity );
         void remove_entity( unsigned int id );
+        void pop_entity();
         std::optional<Entity*> get_entity( unsigned int id );
         std::vector<Entity*> get_all_entities();
         void update();

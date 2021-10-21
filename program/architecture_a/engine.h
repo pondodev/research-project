@@ -13,6 +13,7 @@ namespace arch_a {
         unsigned int add_entity( glm::vec2 _position, glm::vec2 _velocity, glm::vec3 _color );
         unsigned int add_entity( glm::vec2 _position, glm::vec2 _velocity, glm::vec3 _color, glm::vec3 _color_velocity );
         void remove_entity( unsigned int id );
+        void pop_entity();
         std::vector<Entity*> get_entities();
         void update();
 

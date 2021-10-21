@@ -20,6 +20,11 @@ namespace arch_b {
         }
     }
 
+    void Engine::pop_entity() {
+        delete entities.back();
+        entities.pop_back();
+    }
+
     std::optional<Entity*> Engine::get_entity( unsigned int id ) {
         std::optional<Entity*> to_return;
 

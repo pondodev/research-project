@@ -17,6 +17,7 @@
 #include "shader.h"
 #include "batch_renderer.h"
 #include "test_harness.h"
+#include "timer.h"
 
 #include "architecture_a/engine.h"
 #include "architecture_b/engine.h"

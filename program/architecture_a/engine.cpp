@@ -33,6 +33,11 @@ namespace arch_a {
         }
     }
 
+    void Engine::pop_entity() {
+        delete entities.back();
+        entities.pop_back();
+    }
+
     std::vector<Entity*> Engine::get_entities() {
         return entities;
     }
