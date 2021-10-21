@@ -5,6 +5,10 @@ int main() {
     test_a_ramp_up();
     test_a_dynamic_ramp_up();
 
+    test_b_static();
+    test_b_ramp_up();
+    test_b_dynamic_ramp_up();
+
     std::cout << "done!" << std::endl;
 
     return 0;
@@ -15,7 +19,9 @@ void init_glfw_settings() {
     glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
     glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 3 );
     glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
+    #if SINGLE_BUFFERING_ACTIVE
     glfwWindowHint( GLFW_DOUBLEBUFFER, GLFW_FALSE );
+    #endif
 }
 
 // callback function to handle when the window resizes
@@ -236,6 +242,230 @@ void test_a_ramp_up() {
 // TODO: implement
 void test_a_dynamic_ramp_up() {
     std::cout << "running test a dynamic ramp up..." << std::endl;
+}
+
+void test_b_static() {
+    std::cout << "running test b static..." << std::endl;
+
+    init_glfw_settings();
+
+    // create window object
+    GLFWwindow* window = glfwCreateWindow(
+        WINDOW_WIDTH,
+        WINDOW_HEIGHT,
+        "games programming research project",
+        NULL,
+        NULL );
+
+    // ensure creation was successful 
+    if ( window == NULL ) {
+        std::cerr << "failed to create glfw window" << std::endl;
+        glfwTerminate();
+
+        return;
+    }
+
+    // set context
+    glfwMakeContextCurrent( window );
+
+    // load glad before we make any opengl calls
+    if ( !gladLoadGLLoader( (GLADloadproc) glfwGetProcAddress ) ) {
+        std::cerr << "failed to initialise glad" << std::endl;
+
+        return;
+    }
+
+    // set gl viewport size, and set glfw callback for window resize
+    glViewport( 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT );
+    glfwSetFramebufferSizeCallback( window, framebuffer_size_callback );
+
+    #if DEBUG_ACTIVE
+    glEnable( GL_DEBUG_OUTPUT );
+    glDebugMessageCallback( gl_message_callback, 0 );
+    #endif
+
+    Shader visual_shader( "shader.vert", "shader.frag" );
+    BatchRenderer renderer;
+
+    // engine init
+    arch_b::Engine engine;
+
+    for ( int i = 0; i < STATIC_TEST_ENTITY_COUNT; i++ ) {
+        int color_shift_flag = rand() % 2;
+        auto e = new arch_b::Entity();
+        auto pos = new arch_b::PositionComponent( glm::vec2 { rand_f( -1.0, 1.0 ), rand_f( -1.0, 1.0 ) } );
+        auto vel = new arch_b::VelocityComponent( glm::vec2 { rand_f( -0.01, 0.01 ), rand_f( -0.01, 0.01 ) } );
+        auto col = new arch_b::ColorComponent( glm::vec3 { rand_f( 0.0, 1.0 ), rand_f( 0.0, 1.0 ), rand_f( 0.0, 1.0 ) } );
+
+        e->add_component( pos );
+        e->add_component( vel );
+        e->add_component( col );
+
+        if ( color_shift_flag ) {
+            auto col_vel = new arch_b::ColorVelocityComponent( glm::vec3 { rand_f( -0.01, 0.01 ), rand_f( -0.01, 0.01 ), rand_f( -0.01, 0.01 ) } );
+            e->add_component( col_vel );
+        }
+
+        engine.add_entity( e );
+    }
+
+    TestHarness::init();
+
+    while ( !glfwWindowShouldClose( window ) ) {
+        // input
+        process_input( window );
+
+        // update
+        engine.update();
+        if ( TestHarness::update() ) {
+            glfwSetWindowShouldClose( window, true );
+        }
+
+        // draw
+        #if RENDERING_ACTIVE
+        renderer.clear( glm::vec3( 0.1f, 0.1f, 0.1f ) );
+
+        auto entities = engine.get_all_entities();
+        visual_shader.use();
+        for ( auto e : entities ) {
+            auto pos = e->get_component<arch_b::PositionComponent>();
+            auto col = e->get_component<arch_b::ColorComponent>();
+            if ( pos.has_value() && col.has_value() ) {
+                renderer.draw_square(
+                    pos.value()->value,
+                    col.value()->value,
+                    0.05f
+                );
+            }
+        }
+
+        renderer.render( &visual_shader );
+        #endif
+
+        // poll glfw events and swap buffers
+        glfwPollEvents();
+        glfwSwapBuffers( window );
+    }
+
+    // clean up resources upon successful exit
+    glfwTerminate();
+    auto avg = TestHarness::get_average();
+    std::cout << "test a static: " << avg << std::endl;
+}
+
+void test_b_ramp_up() {
+    std::cout << "running test b ramp up..." << std::endl;
+
+    for ( int entity_count = RAMP_UP_TEST_ENTITY_COUNT_START; entity_count <= RAMP_UP_TEST_ENTITY_COUNT_MAX; entity_count += RAMP_UP_TEST_ENTITY_COUNT_INCREMENT ) {
+        init_glfw_settings();
+
+        // create window object
+        GLFWwindow* window = glfwCreateWindow(
+            WINDOW_WIDTH,
+            WINDOW_HEIGHT,
+            "games programming research project",
+            NULL,
+            NULL );
+
+        // ensure creation was successful 
+        if ( window == NULL ) {
+            std::cerr << "failed to create glfw window" << std::endl;
+            glfwTerminate();
+
+            return;
+        }
+
+        // set context
+        glfwMakeContextCurrent( window );
+
+        // load glad before we make any opengl calls
+        if ( !gladLoadGLLoader( (GLADloadproc) glfwGetProcAddress ) ) {
+            std::cerr << "failed to initialise glad" << std::endl;
+
+            return;
+        }
+
+        // set gl viewport size, and set glfw callback for window resize
+        glViewport( 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT );
+        glfwSetFramebufferSizeCallback( window, framebuffer_size_callback );
+
+        #if DEBUG_ACTIVE
+        glEnable( GL_DEBUG_OUTPUT );
+        glDebugMessageCallback( gl_message_callback, 0 );
+        #endif
+
+        Shader visual_shader( "shader.vert", "shader.frag" );
+        BatchRenderer renderer;
+
+        // engine init
+        arch_b::Engine engine;
+
+        for ( int i = 0; i < entity_count; i++ ) {
+            int color_shift_flag = rand() % 2;
+            auto e = new arch_b::Entity();
+            auto pos = new arch_b::PositionComponent( glm::vec2 { rand_f( -1.0, 1.0 ), rand_f( -1.0, 1.0 ) } );
+            auto vel = new arch_b::VelocityComponent( glm::vec2 { rand_f( -0.01, 0.01 ), rand_f( -0.01, 0.01 ) } );
+            auto col = new arch_b::ColorComponent( glm::vec3 { rand_f( 0.0, 1.0 ), rand_f( 0.0, 1.0 ), rand_f( 0.0, 1.0 ) } );
+
+            e->add_component( pos );
+            e->add_component( vel );
+            e->add_component( col );
+
+            if ( color_shift_flag ) {
+                auto col_vel = new arch_b::ColorVelocityComponent( glm::vec3 { rand_f( -0.01, 0.01 ), rand_f( -0.01, 0.01 ), rand_f( -0.01, 0.01 ) } );
+                e->add_component( col_vel );
+            }
+
+            engine.add_entity( e );
+        }
+
+        TestHarness::init();
+
+        while ( !glfwWindowShouldClose( window ) ) {
+            // input
+            process_input( window );
+
+            // update
+            engine.update();
+            if ( TestHarness::update() ) {
+                glfwSetWindowShouldClose( window, true );
+            }
+
+            // draw
+            #if RENDERING_ACTIVE
+            renderer.clear( glm::vec3( 0.1f, 0.1f, 0.1f ) );
+
+            auto entities = engine.get_all_entities();
+            visual_shader.use();
+            for ( auto e : entities ) {
+                auto pos = e->get_component<arch_b::PositionComponent>();
+                auto col = e->get_component<arch_b::ColorComponent>();
+                if ( pos.has_value() && col.has_value() ) {
+                    renderer.draw_square(
+                        pos.value()->value,
+                        col.value()->value,
+                        0.05f
+                    );
+                }
+            }
+
+            renderer.render( &visual_shader );
+            #endif
+
+            // poll glfw events and swap buffers
+            glfwPollEvents();
+            glfwSwapBuffers( window );
+        }
+
+        // clean up resources upon successful exit
+        glfwTerminate();
+        auto avg = TestHarness::get_average();
+        std::cout << "test a ramp up " << entity_count << ": " << avg << std::endl;
+    }
+}
+
+void test_b_dynamic_ramp_up() {
+    std::cout << "running test b dynamic ramp up..." << std::endl;
 }
 
 #if DEBUG_ACTIVE

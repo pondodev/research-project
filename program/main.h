@@ -5,6 +5,7 @@
 #define WINDOW_HEIGHT 500
 #define DEBUG_ACTIVE false
 #define RENDERING_ACTIVE false
+#define SINGLE_BUFFERING_ACTIVE true
 
 #include <iostream>
 #include <cmath>
@@ -18,6 +19,9 @@
 #include "test_harness.h"
 
 #include "architecture_a/engine.h"
+#include "architecture_b/engine.h"
+#include "architecture_b/entity.h"
+#include "architecture_b/components.h"
 
 void init_glfw_settings();
 void framebuffer_size_callback( GLFWwindow* window, int width, int height );
@@ -27,6 +31,11 @@ void process_input( GLFWwindow* window );
 void test_a_static();
 void test_a_ramp_up();
 void test_a_dynamic_ramp_up();
+
+// test b
+void test_b_static();
+void test_b_ramp_up();
+void test_b_dynamic_ramp_up();
 
 #if DEBUG_ACTIVE
 void GLAPIENTRY gl_message_callback( GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* user_param );

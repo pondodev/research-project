@@ -1,5 +1,5 @@
-#ifndef ENTITY_H
-#define ENTITY_H
+#ifndef ARCH_A_ENTITY_H
+#define ARCH_A_ENTITY_H
 
 #include <glm/glm.hpp>
 

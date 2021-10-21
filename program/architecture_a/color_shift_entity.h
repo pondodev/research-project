@@ -1,9 +1,10 @@
-#ifndef COLOR_SHIFT_ENTITY_H
-#define COLOR_SHIFT_ENTITY_H
+#ifndef ARCH_A_COLOR_SHIFT_ENTITY_H
+#define ARCH_A_COLOR_SHIFT_ENTITY_H
 
 #include <glm/glm.hpp>
 
 #include "entity.h"
+#include "../dan_math.h"
 
 namespace arch_a {
     class ColorShiftEntity : public Entity {

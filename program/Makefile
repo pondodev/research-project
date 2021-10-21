@@ -9,6 +9,7 @@ build:
 			glad.c \
 			*.cpp \
 			architecture_a/*.cpp \
+			architecture_b/*.cpp \
 			-lglfw \
 			-lGL \
 			-lX11 \
