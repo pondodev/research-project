@@ -782,7 +782,7 @@ void test_c_static() {
         renderer.clear( glm::vec3( 0.1f, 0.1f, 0.1f ) );
 
         visual_shader.use();
-        for ( auto entity : active_entities ) {
+        for ( auto& entity : active_entities ) {
             auto pos = engine.get_position_component( entity );
             auto col = engine.get_color_component( entity );
             renderer.draw_square(

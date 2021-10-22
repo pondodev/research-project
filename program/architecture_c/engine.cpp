@@ -45,9 +45,9 @@ namespace arch_c {
     }
 
     void Engine::movement_system() {
-        for ( auto e : movement_system_entities ) {
+        for ( auto const& e : movement_system_entities ) {
             auto pos = get_position_component( e );
-            auto vel = get_velocity_component( e );
+            auto const vel = get_velocity_component( e );
             pos->x += vel->x;
             pos->y += vel->y;
 
@@ -60,9 +60,9 @@ namespace arch_c {
     }
 
     void Engine::color_shift_system() {
-        for ( auto e : color_shift_system_entities ) {
+        for ( auto const& e : color_shift_system_entities ) {
             auto col = get_color_component( e );
-            auto col_vel = get_color_velocity_component( e );
+            auto const col_vel = get_color_velocity_component( e );
             col->r += col_vel->r;
             col->g += col_vel->g;
             col->b += col_vel->b;

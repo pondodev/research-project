@@ -37,7 +37,7 @@ namespace arch_c {
             --count;
 
             // replace removed data with other, still active data
-            auto i = entity_to_component[ id ];
+            auto& i = entity_to_component[ id ];
             if ( i != count ) data[ i ] = data[ count ];
 
             // remove entry from unordered map
