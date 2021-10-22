@@ -769,8 +769,7 @@ void test_c_static() {
         process_input( window );
 
         // update
-        engine.movement_system();
-        engine.color_shift_system();
+        engine.dispatch_systems();
         if ( TestHarness::update() ) {
             glfwSetWindowShouldClose( window, true );
         }
@@ -804,9 +803,115 @@ void test_c_static() {
     std::cout << "test c static: " << avg << std::endl;
 }
 
-// TODO: implement
 void test_c_ramp_up() {
     std::cout << "running test c ramp up..." << std::endl;
+
+    for ( int entity_count = RAMP_UP_TEST_ENTITY_COUNT_START; entity_count <= RAMP_UP_TEST_ENTITY_COUNT_MAX; entity_count += RAMP_UP_TEST_ENTITY_COUNT_INCREMENT ) {
+        init_glfw_settings();
+
+        // create window object
+        std::stringstream title;
+        title << "test b ramp up " << entity_count;
+        GLFWwindow* window = glfwCreateWindow(
+            WINDOW_WIDTH,
+            WINDOW_HEIGHT,
+            title.str().c_str(),
+            NULL,
+            NULL );
+
+        // ensure creation was successful 
+        if ( window == NULL ) {
+            std::cerr << "failed to create glfw window" << std::endl;
+            glfwTerminate();
+
+            return;
+        }
+
+        // set context
+        glfwMakeContextCurrent( window );
+
+        // load glad before we make any opengl calls
+        if ( !gladLoadGLLoader( (GLADloadproc) glfwGetProcAddress ) ) {
+            std::cerr << "failed to initialise glad" << std::endl;
+
+            return;
+        }
+
+        // set gl viewport size, and set glfw callback for window resize
+        glViewport( 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT );
+        glfwSetFramebufferSizeCallback( window, framebuffer_size_callback );
+
+        #if DEBUG_ACTIVE
+        glEnable( GL_DEBUG_OUTPUT );
+        glDebugMessageCallback( gl_message_callback, 0 );
+        #endif
+
+        Shader visual_shader( "shader.vert", "shader.frag" );
+        BatchRenderer renderer;
+
+        // engine init
+        arch_c::Engine engine;
+        std::vector<arch_c::Entity> active_entities;
+
+        for ( int i = 0; i < STATIC_TEST_ENTITY_COUNT; ++i ) {
+            auto e = engine.add_entity();
+            if ( e.has_value() ) {
+                auto entity = e.value();
+                active_entities.push_back( entity );
+                auto mov = engine.add_movable_component( entity );
+                auto col = engine.add_color_component( entity );
+
+                *mov = arch_c::MovableComponent { rand_f( -1.0, 1.0 ), rand_f( -1.0, 1.0 ), rand_f( -0.01, 0.01 ), rand_f( -0.01, 0.01 ) };
+                *col = arch_c::ColorComponent { rand_f( 0.0, 1.0 ), rand_f( 0.0, 1.0 ), rand_f( 0.0, 1.0 ) };
+
+                int color_shift_flag = rand() % 2;
+                if ( color_shift_flag ) {
+                    auto col_vel = engine.add_color_velocity_component( entity );
+                    *col_vel = arch_c::ColorVelocityComponent { rand_f( -0.01, 0.01 ), rand_f( -0.01, 0.01 ), rand_f( -0.01, 0.01 ) };
+                }
+            }
+        }
+
+        TestHarness::init();
+
+        while ( !glfwWindowShouldClose( window ) ) {
+            // input
+            process_input( window );
+
+            // update
+            engine.dispatch_systems();
+            if ( TestHarness::update() ) {
+                glfwSetWindowShouldClose( window, true );
+            }
+
+            // draw
+            #if RENDERING_ACTIVE
+            renderer.clear( glm::vec3( 0.1f, 0.1f, 0.1f ) );
+
+            visual_shader.use();
+            for ( auto& entity : active_entities ) {
+                auto mov = engine.get_movable_component( entity );
+                auto col = engine.get_color_component( entity );
+                renderer.draw_square(
+                    glm::vec2 { mov->pos_x, mov->pos_y },
+                    glm::vec3 { col->r, col->g, col->b },
+                    0.05f
+                );
+            }
+
+            renderer.render( &visual_shader );
+            #endif
+
+            // poll glfw events and swap buffers
+            glfwPollEvents();
+            glfwSwapBuffers( window );
+        }
+
+        // clean up resources upon successful exit
+        glfwTerminate();
+        auto avg = TestHarness::get_average();
+        std::cout << "test b ramp up " << entity_count << ": " << avg << std::endl;
+    }
 }
 
 // TODO: implement

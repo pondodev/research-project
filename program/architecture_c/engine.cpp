@@ -12,9 +12,18 @@ namespace arch_c {
         movable_components = new MovableComponent[ MAX_ENTITIES ];
         color_components = new ColorComponent[ MAX_ENTITIES ];
         color_velocity_components = new ColorVelocityComponent[ MAX_ENTITIES ];
+
+        movement_thread = std::thread( &Engine::movement_system, this );
+        color_shift_thread = std::thread( &Engine::color_shift_system, this );
     }
 
     Engine::~Engine() {
+        running = false;
+        movement_thread_lock.unlock();
+        color_shift_thread_lock.unlock();
+        movement_thread.join();
+        color_shift_thread.join();
+
         delete [] entity_component_flags;
     }
 
@@ -39,33 +48,19 @@ namespace arch_c {
         return (int)(entity_component_flags[ id ] & component);
     }
 
-    void Engine::movement_system() {
-        for ( auto const& e : movement_system_entities ) {
-            auto mov = get_movable_component( e );
-            mov->pos_x += mov->vel_x;
-            mov->pos_y += mov->vel_y;
+    void Engine::dispatch_systems() {
+        movement_thread_cycle_complete = false;
+        color_shift_thread_cycle_complete = false;
+        movement_thread_lock.unlock();
+        color_shift_thread_lock.unlock();
 
-            // looping positions
-            if ( mov->pos_x > 1.0f ) mov->pos_x -= 2.0f;
-            if ( mov->pos_y > 1.0f ) mov->pos_y -= 2.0f;
-            if ( mov->pos_x < -1.0f ) mov->pos_x += 2.0f;
-            if ( mov->pos_y < -1.0f ) mov->pos_y += 2.0f;
-        }
+        system_threads_complete.wait(
+            system_thread_status_lock,
+            [ this ] { return are_thread_cycles_complete(); } );
     }
 
-    void Engine::color_shift_system() {
-        for ( auto const& e : color_shift_system_entities ) {
-            auto col = get_color_component( e );
-            auto const col_vel = get_color_velocity_component( e );
-            col->r += col_vel->r;
-            col->g += col_vel->g;
-            col->b += col_vel->b;
-
-            // looping colours
-            col->r = frac( col->r );
-            col->g = frac( col->g );
-            col->b = frac( col->b );
-        }
+    bool Engine::are_thread_cycles_complete() {
+        return movement_thread_cycle_complete && color_shift_thread_cycle_complete;
     }
 
     MovableComponent* Engine::add_movable_component( Entity id ) {
@@ -95,5 +90,52 @@ namespace arch_c {
 
     ColorVelocityComponent* Engine::get_color_velocity_component( Entity id ) {
         return &color_velocity_components[ id ];
+    }
+
+    void Engine::movement_system() {
+        while ( running ) {
+            movement_thread_lock.lock();
+
+            for ( auto const& e : movement_system_entities ) {
+                auto mov = get_movable_component( e );
+                mov->pos_x += mov->vel_x;
+                mov->pos_y += mov->vel_y;
+
+                // looping positions
+                if ( mov->pos_x > 1.0f ) mov->pos_x -= 2.0f;
+                if ( mov->pos_y > 1.0f ) mov->pos_y -= 2.0f;
+                if ( mov->pos_x < -1.0f ) mov->pos_x += 2.0f;
+                if ( mov->pos_y < -1.0f ) mov->pos_y += 2.0f;
+            }
+
+            system_thread_status_lock.lock();
+            movement_thread_cycle_complete = true;
+            system_thread_status_lock.unlock();
+            system_threads_complete.notify_all();
+        }
+    }
+
+    void Engine::color_shift_system() {
+        while ( running ) {
+            color_shift_thread_lock.lock();
+
+            for ( auto const& e : color_shift_system_entities ) {
+                auto col = get_color_component( e );
+                auto const col_vel = get_color_velocity_component( e );
+                col->r += col_vel->r;
+                col->g += col_vel->g;
+                col->b += col_vel->b;
+
+                // looping colours
+                col->r = frac( col->r );
+                col->g = frac( col->g );
+                col->b = frac( col->b );
+            }
+
+            system_thread_status_lock.lock();
+            color_shift_thread_cycle_complete = true;
+            system_thread_status_lock.unlock();
+            system_threads_complete.notify_all();
+        }
     }
 }
