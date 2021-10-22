@@ -748,12 +748,10 @@ void test_c_static() {
         if ( e.has_value() ) {
             auto entity = e.value();
             active_entities.push_back( entity );
-            auto pos = engine.add_position_component( entity );
-            auto vel = engine.add_velocity_component( entity );
+            auto mov = engine.add_movable_component( entity );
             auto col = engine.add_color_component( entity );
 
-            *pos = arch_c::PositionComponent { rand_f( -1.0, 1.0 ), rand_f( -1.0, 1.0 ) };
-            *vel = arch_c::VelocityComponent { rand_f( -0.01, 0.01 ), rand_f( -0.01, 0.01 ) };
+            *mov = arch_c::MovableComponent { rand_f( -1.0, 1.0 ), rand_f( -1.0, 1.0 ), rand_f( -0.01, 0.01 ), rand_f( -0.01, 0.01 ) };
             *col = arch_c::ColorComponent { rand_f( 0.0, 1.0 ), rand_f( 0.0, 1.0 ), rand_f( 0.0, 1.0 ) };
 
             int color_shift_flag = rand() % 2;
@@ -783,10 +781,10 @@ void test_c_static() {
 
         visual_shader.use();
         for ( auto& entity : active_entities ) {
-            auto pos = engine.get_position_component( entity );
+            auto mov = engine.get_movable_component( entity );
             auto col = engine.get_color_component( entity );
             renderer.draw_square(
-                glm::vec2 { pos->x, pos->y },
+                glm::vec2 { mov->pos_x, mov->pos_y },
                 glm::vec3 { col->r, col->g, col->b },
                 0.05f
             );

@@ -33,13 +33,11 @@ namespace arch_c {
         void movement_system();
         void color_shift_system();
 
-        PositionComponent* add_position_component( Entity id );
-        VelocityComponent* add_velocity_component( Entity id );
+        MovableComponent* add_movable_component( Entity id );
         ColorComponent* add_color_component( Entity id );
         ColorVelocityComponent* add_color_velocity_component( Entity id );
 
-        PositionComponent* get_position_component( Entity id );
-        VelocityComponent* get_velocity_component( Entity id );
+        MovableComponent* get_movable_component( Entity id );
         ColorComponent* get_color_component( Entity id );
         ColorVelocityComponent* get_color_velocity_component( Entity id );
 
@@ -49,8 +47,7 @@ namespace arch_c {
         std::vector<Entity> color_shift_system_entities;
 
         ComponentFlag* entity_component_flags;
-        ComponentContainer<PositionComponent, MAX_ENTITIES> position_components;
-        ComponentContainer<VelocityComponent, MAX_ENTITIES> velocity_components;
+        ComponentContainer<MovableComponent, MAX_ENTITIES> movable_components;
         ComponentContainer<ColorComponent, MAX_ENTITIES> color_components;
         ComponentContainer<ColorVelocityComponent, MAX_ENTITIES> color_velocity_components;
     };

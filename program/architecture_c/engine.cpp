@@ -28,8 +28,7 @@ namespace arch_c {
 
     void Engine::remove_entity( Entity id ) {
         // remove components from the component containers
-        position_components.remove( id );
-        velocity_components.remove( id );
+        movable_components.remove( id );
         color_components.remove( id );
 
         if ( entity_has_component( id, ComponentFlag::ColorVelocity ) )
@@ -46,16 +45,15 @@ namespace arch_c {
 
     void Engine::movement_system() {
         for ( auto const& e : movement_system_entities ) {
-            auto pos = get_position_component( e );
-            auto const vel = get_velocity_component( e );
-            pos->x += vel->x;
-            pos->y += vel->y;
+            auto mov = get_movable_component( e );
+            mov->pos_x += mov->vel_x;
+            mov->pos_y += mov->vel_y;
 
             // looping positions
-            if ( pos->x > 1.0f ) pos->x -= 2.0f;
-            if ( pos->y > 1.0f ) pos->y -= 2.0f;
-            if ( pos->x < -1.0f ) pos->x += 2.0f;
-            if ( pos->y < -1.0f ) pos->y += 2.0f;
+            if ( mov->pos_x > 1.0f ) mov->pos_x -= 2.0f;
+            if ( mov->pos_y > 1.0f ) mov->pos_y -= 2.0f;
+            if ( mov->pos_x < -1.0f ) mov->pos_x += 2.0f;
+            if ( mov->pos_y < -1.0f ) mov->pos_y += 2.0f;
         }
     }
 
@@ -74,15 +72,9 @@ namespace arch_c {
         }
     }
 
-    PositionComponent* Engine::add_position_component( Entity id ) {
-        entity_component_flags[ id ] |= ComponentFlag::Position;
-        return position_components.add( id );
-    }
-
-    VelocityComponent* Engine::add_velocity_component( Entity id ) {
-        entity_component_flags[ id ] |= ComponentFlag::Velocity;
-        movement_system_entities.push_back( id );
-        return velocity_components.add( id );
+    MovableComponent* Engine::add_movable_component( Entity id ) {
+        entity_component_flags[ id ] |= ComponentFlag::Movable;
+        return movable_components.add( id );
     }
 
     ColorComponent* Engine::add_color_component( Entity id ) {
@@ -96,12 +88,8 @@ namespace arch_c {
         return color_velocity_components.add( id );
     }
 
-    PositionComponent* Engine::get_position_component( Entity id ) {
-        return position_components.get( id );
-    }
-
-    VelocityComponent* Engine::get_velocity_component( Entity id ) {
-        return velocity_components.get( id );
+    MovableComponent* Engine::get_movable_component( Entity id ) {
+        return movable_components.get( id );
     }
 
     ColorComponent* Engine::get_color_component( Entity id ) {

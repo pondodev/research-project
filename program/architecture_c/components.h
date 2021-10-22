@@ -2,14 +2,11 @@
 #define ARCH_C_COMPONENT_H
 
 namespace arch_c {
-    struct PositionComponent {
-        float x;
-        float y;
-    };
-
-    struct VelocityComponent {
-        float x;
-        float y;
+    struct MovableComponent {
+        float pos_x;
+        float pos_y;
+        float vel_x;
+        float vel_y;
     };
 
     struct ColorComponent {
