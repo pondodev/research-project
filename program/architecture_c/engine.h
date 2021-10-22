@@ -8,7 +8,6 @@
 #include <cstring>
 
 #include "types.h"
-#include "component_container.h"
 #include "components.h"
 #include "../dan_math.h"
 
@@ -47,9 +46,9 @@ namespace arch_c {
         std::vector<Entity> color_shift_system_entities;
 
         ComponentFlag* entity_component_flags;
-        ComponentContainer<MovableComponent, MAX_ENTITIES> movable_components;
-        ComponentContainer<ColorComponent, MAX_ENTITIES> color_components;
-        ComponentContainer<ColorVelocityComponent, MAX_ENTITIES> color_velocity_components;
+        MovableComponent* movable_components;
+        ColorComponent* color_components;
+        ColorVelocityComponent* color_velocity_components;
     };
 }
 

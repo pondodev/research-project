@@ -9,6 +9,9 @@ namespace arch_c {
 
         entity_component_flags = new ComponentFlag[ MAX_ENTITIES ];
         memset( entity_component_flags, 0x0000, MAX_ENTITIES ); // zero out flags
+        movable_components = new MovableComponent[ MAX_ENTITIES ];
+        color_components = new ColorComponent[ MAX_ENTITIES ];
+        color_velocity_components = new ColorVelocityComponent[ MAX_ENTITIES ];
     }
 
     Engine::~Engine() {
@@ -27,13 +30,6 @@ namespace arch_c {
     }
 
     void Engine::remove_entity( Entity id ) {
-        // remove components from the component containers
-        movable_components.remove( id );
-        color_components.remove( id );
-
-        if ( entity_has_component( id, ComponentFlag::ColorVelocity ) )
-            color_velocity_components.remove( id );
-
         // reset entity values
         entity_component_flags[ id ] = (ComponentFlag)0x0000;
         available_entities.push( id );
@@ -74,29 +70,30 @@ namespace arch_c {
 
     MovableComponent* Engine::add_movable_component( Entity id ) {
         entity_component_flags[ id ] |= ComponentFlag::Movable;
-        return movable_components.add( id );
+        movement_system_entities.push_back( id );
+        return &movable_components[ id ];
     }
 
     ColorComponent* Engine::add_color_component( Entity id ) {
         entity_component_flags[ id ] |= ComponentFlag::Color;
-        return color_components.add( id );
+        return &color_components[ id ];
     }
 
     ColorVelocityComponent* Engine::add_color_velocity_component( Entity id ) {
         entity_component_flags[ id ] |= ComponentFlag::ColorVelocity;
         color_shift_system_entities.push_back( id );
-        return color_velocity_components.add( id );
+        return &color_velocity_components[ id ];
     }
 
     MovableComponent* Engine::get_movable_component( Entity id ) {
-        return movable_components.get( id );
+        return &movable_components[ id ];
     }
 
     ColorComponent* Engine::get_color_component( Entity id ) {
-        return color_components.get( id );
+        return &color_components[ id ];
     }
 
     ColorVelocityComponent* Engine::get_color_velocity_component( Entity id ) {
-        return color_velocity_components.get( id );
+        return &color_velocity_components[ id ];
     }
 }
