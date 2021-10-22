@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <unordered_map>
 #include <algorithm>
+#include <iostream>
 
 #include "types.h"
 
@@ -11,6 +12,14 @@ namespace arch_c {
     template <typename T, size_t N>
     class ComponentContainer {
     public:
+        ComponentContainer() {
+            data = new T[ N ];
+        }
+
+        ~ComponentContainer() {
+            delete [] data;
+        }
+
         T* add( Entity id ) {
             auto i = count;
             entity_to_component.emplace( id, count );
@@ -43,10 +52,10 @@ namespace arch_c {
         }
 
     private:
-        T data[ N ];
+        T* data;
         // map of entity ids to component array indices
         std::unordered_map<Entity, size_t> entity_to_component;
-        size_t count;
+        size_t count = 0;
     };
 };
 

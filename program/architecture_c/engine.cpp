@@ -44,7 +44,6 @@ namespace arch_c {
         return (int)(entity_component_flags[ id ] & component);
     }
 
-
     void Engine::movement_system() {
         for ( auto e : movement_system_entities ) {
             auto pos = get_position_component( e );

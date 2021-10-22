@@ -1,17 +1,17 @@
 #include "main.h"
 
 int main() {
-    //test_a_static();
-    //test_a_ramp_up();
-    //test_a_dynamic_ramp_up();
+    test_a_static();
+    test_a_ramp_up();
+    test_a_dynamic_ramp_up();
 
-    //test_b_static();
-    //test_b_ramp_up();
-    //test_b_dynamic_ramp_up();
+    test_b_static();
+    test_b_ramp_up();
+    test_b_dynamic_ramp_up();
 
     test_c_static();
-    //test_c_ramp_up();
-    //test_c_dynamic_ramp_up();
+    test_c_ramp_up();
+    test_c_dynamic_ramp_up();
 
     std::cout << "done!" << std::endl;
 
