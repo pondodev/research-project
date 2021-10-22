@@ -1,17 +1,17 @@
 #include "main.h"
 
 int main() {
-    test_a_static();
-    test_a_ramp_up();
-    test_a_dynamic_ramp_up();
+    //test_a_static();
+    //test_a_ramp_up();
+    //test_a_dynamic_ramp_up();
 
-    test_b_static();
-    test_b_ramp_up();
-    test_b_dynamic_ramp_up();
+    //test_b_static();
+    //test_b_ramp_up();
+    //test_b_dynamic_ramp_up();
 
     test_c_static();
-    test_c_ramp_up();
-    test_c_dynamic_ramp_up();
+    //test_c_ramp_up();
+    //test_c_dynamic_ramp_up();
 
     std::cout << "done!" << std::endl;
 
@@ -743,7 +743,7 @@ void test_c_static() {
     arch_c::Engine engine;
     std::vector<arch_c::Entity> active_entities;
 
-    for ( int i = 0; i < STATIC_TEST_ENTITY_COUNT; i++ ) {
+    for ( int i = 0; i < STATIC_TEST_ENTITY_COUNT; ++i ) {
         auto e = engine.add_entity();
         if ( e.has_value() ) {
             auto entity = e.value();
@@ -771,31 +771,8 @@ void test_c_static() {
         process_input( window );
 
         // update
-        for ( auto entity : active_entities ) {
-            auto pos = engine.get_position_component( entity );
-            auto vel = engine.get_velocity_component( entity );
-            pos->x += vel->x;
-            pos->y += vel->y;
-
-            // looping positions
-            if ( pos->x > 1.0f ) pos->x -= 2.0f;
-            if ( pos->y > 1.0f ) pos->y -= 2.0f;
-            if ( pos->x < -1.0f ) pos->x += 2.0f;
-            if ( pos->y < -1.0f ) pos->y += 2.0f;
-
-            if ( !engine.entity_has_component( entity, arch_c::ComponentFlag::ColorVelocity ) ) continue;
-            auto col = engine.get_color_component( entity );
-            auto col_vel = engine.get_color_velocity_component( entity );
-            col->r += col_vel->r;
-            col->g += col_vel->g;
-            col->b += col_vel->b;
-
-            // looping colours
-            col->r = frac( col->r );
-            col->g = frac( col->g );
-            col->b = frac( col->b );
-        }
-
+        engine.movement_system();
+        engine.color_shift_system();
         if ( TestHarness::update() ) {
             glfwSetWindowShouldClose( window, true );
         }

@@ -4,21 +4,15 @@
 #define MAX_ENTITIES 500000
 
 #include <queue>
-#include <cstdint>
 #include <optional>
 #include <cstring>
 
+#include "types.h"
+#include "component_container.h"
 #include "components.h"
+#include "../dan_math.h"
 
 namespace arch_c {
-    typedef uint32_t Entity;
-    typedef enum {
-        Position      = 0x0001,
-        Velocity      = 0x0010,
-        Color         = 0x0100,
-        ColorVelocity = 0x1000
-    } ComponentFlag;
-
     // source: https://stackoverflow.com/a/23152590
     template<class T> inline T operator~ (T a) { return (T)~(int)a; }
     template<class T> inline T operator| (T a, T b) { return (T)((int)a | (int)b); }
@@ -34,7 +28,10 @@ namespace arch_c {
         ~Engine();
         std::optional<Entity> add_entity();
         void remove_entity( Entity id );
-        bool entity_has_component( Entity id, ComponentFlag component );
+        int entity_has_component( Entity id, ComponentFlag component );
+
+        void movement_system();
+        void color_shift_system();
 
         PositionComponent* add_position_component( Entity id );
         VelocityComponent* add_velocity_component( Entity id );
@@ -48,11 +45,14 @@ namespace arch_c {
 
     private:
         std::queue<Entity> available_entities;
+        std::vector<Entity> movement_system_entities;
+        std::vector<Entity> color_shift_system_entities;
+
         ComponentFlag* entity_component_flags;
-        PositionComponent* position_components;
-        VelocityComponent* velocity_components;
-        ColorComponent* color_components;
-        ColorVelocityComponent* color_velocity_components;
+        ComponentContainer<PositionComponent, MAX_ENTITIES> position_components;
+        ComponentContainer<VelocityComponent, MAX_ENTITIES> velocity_components;
+        ComponentContainer<ColorComponent, MAX_ENTITIES> color_components;
+        ComponentContainer<ColorVelocityComponent, MAX_ENTITIES> color_velocity_components;
     };
 }
 
