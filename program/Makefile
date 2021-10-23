@@ -6,6 +6,7 @@ fullclean: clean build run
 
 build:
 		g++ \
+			--std=c++17 \
 			glad.c \
 			*.cpp \
 			architecture_a/*.cpp \
@@ -30,6 +31,7 @@ clean:
 
 test:
 		g++ \
+			--std=c++17 \
 			glad.c \
 			*.cpp \
 			architecture_a/*.cpp \
@@ -49,6 +51,7 @@ test:
 		./$(executable_name) > o0.output
 
 		g++ \
+			--std=c++17 \
 			glad.c \
 			*.cpp \
 			architecture_a/*.cpp \
@@ -68,6 +71,7 @@ test:
 		./$(executable_name) > o1.output
 
 		g++ \
+			--std=c++17 \
 			glad.c \
 			*.cpp \
 			architecture_a/*.cpp \
@@ -87,6 +91,7 @@ test:
 		./$(executable_name) > o2.output
 
 		g++ \
+			--std=c++17 \
 			glad.c \
 			*.cpp \
 			architecture_a/*.cpp \
