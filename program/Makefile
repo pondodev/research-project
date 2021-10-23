@@ -11,6 +11,7 @@ build:
 			architecture_a/*.cpp \
 			architecture_b/*.cpp \
 			architecture_c/*.cpp \
+			architecture_d/*.cpp \
 			-lglfw \
 			-lGL \
 			-lX11 \
