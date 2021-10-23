@@ -769,7 +769,8 @@ void test_c_static() {
         process_input( window );
 
         // update
-        engine.dispatch_systems();
+        engine.movement_system();
+        engine.color_shift_system();
         if ( TestHarness::update() ) {
             glfwSetWindowShouldClose( window, true );
         }
@@ -879,7 +880,8 @@ void test_c_ramp_up() {
             process_input( window );
 
             // update
-            engine.dispatch_systems();
+            engine.movement_system();
+            engine.color_shift_system();
             if ( TestHarness::update() ) {
                 glfwSetWindowShouldClose( window, true );
             }
