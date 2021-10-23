@@ -13,9 +13,9 @@ int main() {
     test_c_ramp_up();
     test_c_dynamic_ramp_up();
 
-    test_d_static();
-    test_d_ramp_up();
-    test_d_dynamic_ramp_up();
+    //test_d_static();
+    //test_d_ramp_up();
+    //test_d_dynamic_ramp_up();
 
     std::cout << "done!" << std::endl;
 
@@ -1080,7 +1080,8 @@ void test_d_static() {
     arch_d::Engine engine;
     std::vector<arch_d::Entity> active_entities;
 
-    for ( int i = 0; i < STATIC_TEST_ENTITY_COUNT; ++i ) {
+    //for ( int i = 0; i < STATIC_TEST_ENTITY_COUNT; ++i ) {
+    for ( int i = 0; i < 10; ++i ) {
         auto e = engine.add_entity();
         if ( e.has_value() ) {
             auto entity = e.value();

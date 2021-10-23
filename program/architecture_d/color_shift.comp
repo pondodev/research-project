@@ -1,0 +1,17 @@
+#version 430 core
+
+layout (local_size_x = 1) in;
+layout (rgba32f, binding = 2) uniform image2D colors;
+layout (rgba32f, binding = 3) uniform image2D color_velocities;
+
+void main() {
+    ivec2 index = ivec2( gl_GlobalInvocationID.xy );
+
+    vec3 col = imageLoad( colors, index ).rgb;
+    vec3 col_vel = imageLoad( color_velocities, index ).rgb;
+
+    col += col_vel;
+    fract( col );
+
+    imageStore( colors, index, vec4( col, 0.0 ) );
+}

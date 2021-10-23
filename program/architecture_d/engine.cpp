@@ -2,7 +2,9 @@
 #include <iostream>
 
 namespace arch_d {
-    Engine::Engine() {
+    Engine::Engine()
+    : movement_compute( "architecture_d/movement.comp", glm::vec2( MAX_COMPUTE_BATCH / 2, MAX_COMPUTE_BATCH / 2 ) ),
+      color_shift_compute( "architecture_d/color_shift.comp", glm::vec2( MAX_COMPUTE_BATCH / 2, MAX_COMPUTE_BATCH / 2 ) ) {
         for ( Entity i = 0; i < MAX_ENTITIES; ++i ) {
             available_entities.push( i );
         }
@@ -40,17 +42,29 @@ namespace arch_d {
     }
 
     void Engine::movement_system() {
+        // TODO: very not working
+        std::vector<float> positions;
+        std::vector<float> velocities;
         for ( auto const& e : movement_system_entities ) {
             auto mov = get_movable_component( e );
-            mov->pos_x += mov->vel_x;
-            mov->pos_y += mov->vel_y;
+            positions.push_back( mov->pos_x );
+            positions.push_back( mov->pos_y );
+            // padding so it all fits in the rgba space of the texture
+            positions.push_back( 0.0f );
+            positions.push_back( 0.0f );
 
-            // looping positions
-            if ( mov->pos_x > 1.0f ) mov->pos_x -= 2.0f;
-            if ( mov->pos_y > 1.0f ) mov->pos_y -= 2.0f;
-            if ( mov->pos_x < -1.0f ) mov->pos_x += 2.0f;
-            if ( mov->pos_y < -1.0f ) mov->pos_y += 2.0f;
+            velocities.push_back( mov->vel_x );
+            velocities.push_back( mov->vel_y );
+            // padding so it all fits in the rgba space of the texture
+            velocities.push_back( 0.0f );
+            velocities.push_back( 0.0f );
         }
+
+        movement_compute.set_values( 1, positions.data() );
+        movement_compute.set_values( 2, velocities.data() );
+        movement_compute.wait();
+
+        auto result = movement_compute.get_values();
     }
 
     void Engine::color_shift_system() {

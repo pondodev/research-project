@@ -13,7 +13,8 @@
 class Compute {
     public:
     unsigned int id;
-    unsigned int out_tex;
+    unsigned int tex1;
+    unsigned int tex2;
 
     Compute( const char* path, glm::uvec2 size ) {
         work_size = size;
@@ -53,17 +54,28 @@ class Compute {
         glDeleteShader( shader );
 
         // create input/output textures
-        glGenTextures( 1, &out_tex );
+        glGenTextures( 1, &tex1 );
         glActiveTexture( GL_TEXTURE0 );
-        glBindTexture( GL_TEXTURE_2D, out_tex );
+        glBindTexture( GL_TEXTURE_2D, tex1 );
 
         // turns out we need this. huh.
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 
         // create empty texture
-        glTexImage2D( GL_TEXTURE_2D, 0, GL_R32F, size.x, size.y, 0, GL_RED, GL_FLOAT, NULL );
-        glBindImageTexture( 0, out_tex, 0, GL_FALSE, 0, GL_READ_WRITE, GL_R32F );
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA32F, size.x, size.y, 0, GL_RGBA, GL_FLOAT, NULL );
+        glBindImageTexture( 0, tex1, 0, GL_FALSE, 0, GL_READ_WRITE, GL_R32F );
+
+        // do the same for the second texture
+        glGenTextures( 1, &tex2 );
+        glActiveTexture( GL_TEXTURE1 );
+        glBindTexture( GL_TEXTURE_2D, tex2 );
+
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA32F, size.x, size.y, 0, GL_RGBA, GL_FLOAT, NULL );
+        glBindImageTexture( 0, tex1, 0, GL_FALSE, 0, GL_READ_WRITE, GL_R32F );
     }
 
     ~Compute() {
@@ -73,7 +85,7 @@ class Compute {
     void use() {
         glUseProgram( id );
         glActiveTexture( GL_TEXTURE0 );
-        glBindTexture( GL_TEXTURE_2D, out_tex );
+        glBindTexture( GL_TEXTURE_2D, tex1 );
     }
 
     void dispatch() {
@@ -85,8 +97,16 @@ class Compute {
         glMemoryBarrier( GL_ALL_BARRIER_BITS );
     }
 
-    void set_values( float* values ) {
-        glTexImage2D( GL_TEXTURE_2D, 0, GL_R32F, work_size.x, work_size.y, 0, GL_RED, GL_FLOAT, values );
+    void set_values( int tex, float* values ) {
+        if ( tex == 1 ) {
+            glActiveTexture( GL_TEXTURE0 );
+            glBindTexture( GL_TEXTURE_2D, tex1 );
+        } else {
+            glActiveTexture( GL_TEXTURE1 );
+            glBindTexture( GL_TEXTURE_2D, tex2 );
+        }
+
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA32F, work_size.x, work_size.y, 0, GL_RGBA, GL_FLOAT, values );
     }
 
     std::vector<float> get_values() {
