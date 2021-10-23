@@ -26,11 +26,10 @@
 \section{Introduction}
 \subsection{Background}
 Game architecture is an art, one that is truly hard to learn and master. In
-fact, there are many experts and experienced developers who disagree all the
-time on the topic of how the backbone of games should be structured. This
-happens for a variety of reasons, but more often than not we will see two
-aspects of various architectures compared: the usability or maintainability, and
-the performance.
+fact, there are many experts and experienced developers who disagree frequently
+on the topic of how the backbone of games should be structured. This happens for
+a variety of reasons, but more often than not we will see two aspects of various
+architectures compared: the usability or maintainability, and the performance.
 
 When we talk about the usability or maintainability of something, we refer to
 how easy it is to work with. Of interest to us is the ergonomics related to
@@ -71,16 +70,24 @@ for testing in three key ways:
 
 \subsubsection{Static}
 The test will be run with 250,000 entities in the simulation over the course of
-one minute.
+one minute. The purpose of this test is to understand at a high level how
+compiler optimisation level affects the speed of each architecture.
 
 \subsubsection{Ramp-up}
 There will be multiple tests run for each architecture, starting at 100,000
 entities and adding 100,000 with each subsequent test until 500,000 entities is
-reached. Each test will be run over the course of one minute.
+reached. Each test will be run over the course of one minute. The purpose of
+this test is to understand at a high level how a given architecture scales up
+given n amount of entities.
 
 \subsubsection{Dynamic Ramp-up}
-The same as ramp-up, but will change the amount of entities during runtime of
-the test instead of restarting the test each time. 
+A single test will be run for each architecture that starts with 0 entities. For
+each cycle performed, an entity will be added to the architecture until a limit
+of 100,000 entities is hit. Once this limit has been hit, entities will start
+being removed from the architecture until there are none left, and the time
+taken to execute will be measured. The purpose of this test is to understand at
+a high level how the overhead introduced by the creation and removal of entities
+from an architecture affect the execution time of an application.
 
 \subsection{Environment}
 In order to test each of these architectures, a common environment for them to
@@ -95,6 +102,11 @@ important later on for one of our architectures.
 
 % TODO: implement these so i can actually write on them!
 \section{Introduction to Tested Architectures}
+This research has chosen to focus on four key architectures. The rationale
+behind this is while it might not be exhaustive, it will provide meaningful
+data points to inform how different styles and implementations of architecture
+can affects the usability/maintainability and performance of your game.
+
 \subsection{Pure Object Oriented}
 
 \subsection{Object Oriented Component Pattern}
