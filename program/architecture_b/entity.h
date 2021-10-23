@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <typeinfo>
 #include <optional>
+#include <algorithm>
 
 #include "component_base.h"
 

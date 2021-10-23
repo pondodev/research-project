@@ -44,14 +44,11 @@ namespace arch_b {
 
     void Engine::update() {
         for ( auto e : entities ) {
-            auto pos = e->get_component<PositionComponent>();
-            auto vel = e->get_component<VelocityComponent>();
+            auto mov = e->get_component<MovementComponent>();
             auto col = e->get_component<ColorComponent>();
             auto col_vel = e->get_component<ColorVelocityComponent>();
 
-            if ( pos.has_value() && vel.has_value() ) {
-                pos.value()->apply_velocity( vel.value()->value );
-            }
+            if ( mov.has_value() ) mov.value()->move();
 
             if ( col.has_value() && col_vel.has_value() ) {
                 col.value()->apply_velocity( col_vel.value()->value );

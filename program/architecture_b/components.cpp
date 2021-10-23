@@ -1,22 +1,19 @@
 #include "components.h"
 
 namespace arch_b {
-    PositionComponent::PositionComponent( glm::vec2 _value ) {
-        value = _value;
+    MovementComponent::MovementComponent( glm::vec2 _pos, glm::vec2 _vel ) {
+        pos = _pos;
+        vel = _vel;
     }
 
-    void PositionComponent::apply_velocity( glm::vec2 vel ) {
-        value += vel;
+    void MovementComponent::move() {
+        pos += vel;
 
         // looping around edges of screen
-        if ( value.x > 1.0f ) value.x -= 2.0f;
-        if ( value.y > 1.0f ) value.y -= 2.0f;
-        if ( value.x < -1.0f ) value.x += 2.0f;
-        if ( value.y < -1.0f ) value.y += 2.0f;
-    }
-
-    VelocityComponent::VelocityComponent( glm::vec2 _value ) {
-        value = _value;
+        if ( pos.x > 1.0f ) pos.x -= 2.0f;
+        if ( pos.y > 1.0f ) pos.y -= 2.0f;
+        if ( pos.x < -1.0f ) pos.x += 2.0f;
+        if ( pos.y < -1.0f ) pos.y += 2.0f;
     }
 
     ColorComponent::ColorComponent( glm::vec3 _value ) {

@@ -7,17 +7,14 @@
 #include "../dan_math.h"
 
 namespace arch_b {
-    class PositionComponent : public Component {
+    class MovementComponent : public Component {
     public:
-        PositionComponent( glm::vec2 _value );
-        void apply_velocity( glm::vec2 vel );
-        glm::vec2 value;
-    };
+        MovementComponent( glm::vec2 _pos, glm::vec2 _vel );
+        void move();
+        glm::vec2 pos;
 
-    class VelocityComponent : public Component {
-    public:
-        VelocityComponent( glm::vec2 _value );
-        glm::vec2 value;
+    private:
+        glm::vec2 vel;
     };
 
     class ColorComponent : public Component {

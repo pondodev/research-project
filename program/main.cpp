@@ -404,12 +404,10 @@ void test_b_static() {
     for ( int i = 0; i < STATIC_TEST_ENTITY_COUNT; i++ ) {
         int color_shift_flag = rand() % 2;
         auto e = new arch_b::Entity();
-        auto pos = new arch_b::PositionComponent( glm::vec2 { rand_f( -1.0, 1.0 ), rand_f( -1.0, 1.0 ) } );
-        auto vel = new arch_b::VelocityComponent( glm::vec2 { rand_f( -0.01, 0.01 ), rand_f( -0.01, 0.01 ) } );
+        auto mov = new arch_b::MovementComponent( glm::vec2 { rand_f( -1.0, 1.0 ), rand_f( -1.0, 1.0 ) }, glm::vec2 { rand_f( -0.01, 0.01 ), rand_f( -0.01, 0.01 ) } );
         auto col = new arch_b::ColorComponent( glm::vec3 { rand_f( 0.0, 1.0 ), rand_f( 0.0, 1.0 ), rand_f( 0.0, 1.0 ) } );
 
-        e->add_component( pos );
-        e->add_component( vel );
+        e->add_component( mov );
         e->add_component( col );
 
         if ( color_shift_flag ) {
@@ -439,11 +437,11 @@ void test_b_static() {
         auto entities = engine.get_all_entities();
         visual_shader.use();
         for ( auto e : entities ) {
-            auto pos = e->get_component<arch_b::PositionComponent>();
+            auto mov = e->get_component<arch_b::MovementComponent>();
             auto col = e->get_component<arch_b::ColorComponent>();
-            if ( pos.has_value() && col.has_value() ) {
+            if ( mov.has_value() && col.has_value() ) {
                 renderer.draw_square(
-                    pos.value()->value,
+                    mov.value()->pos,
                     col.value()->value,
                     0.05f
                 );
@@ -516,12 +514,10 @@ void test_b_ramp_up() {
         for ( int i = 0; i < entity_count; i++ ) {
             int color_shift_flag = rand() % 2;
             auto e = new arch_b::Entity();
-            auto pos = new arch_b::PositionComponent( glm::vec2 { rand_f( -1.0, 1.0 ), rand_f( -1.0, 1.0 ) } );
-            auto vel = new arch_b::VelocityComponent( glm::vec2 { rand_f( -0.01, 0.01 ), rand_f( -0.01, 0.01 ) } );
+            auto mov = new arch_b::MovementComponent( glm::vec2 { rand_f( -1.0, 1.0 ), rand_f( -1.0, 1.0 ) }, glm::vec2 { rand_f( -0.01, 0.01 ), rand_f( -0.01, 0.01 ) } );
             auto col = new arch_b::ColorComponent( glm::vec3 { rand_f( 0.0, 1.0 ), rand_f( 0.0, 1.0 ), rand_f( 0.0, 1.0 ) } );
 
-            e->add_component( pos );
-            e->add_component( vel );
+            e->add_component( mov );
             e->add_component( col );
 
             if ( color_shift_flag ) {
@@ -551,11 +547,11 @@ void test_b_ramp_up() {
             auto entities = engine.get_all_entities();
             visual_shader.use();
             for ( auto e : entities ) {
-                auto pos = e->get_component<arch_b::PositionComponent>();
+                auto mov = e->get_component<arch_b::MovementComponent>();
                 auto col = e->get_component<arch_b::ColorComponent>();
-                if ( pos.has_value() && col.has_value() ) {
+                if ( mov.has_value() && col.has_value() ) {
                     renderer.draw_square(
-                        pos.value()->value,
+                        mov.value()->pos,
                         col.value()->value,
                         0.05f
                     );
@@ -636,12 +632,10 @@ void test_b_dynamic_ramp_up() {
         if ( ascending ) {
             int color_shift_flag = rand() % 2;
             auto e = new arch_b::Entity();
-            auto pos = new arch_b::PositionComponent( glm::vec2 { rand_f( -1.0, 1.0 ), rand_f( -1.0, 1.0 ) } );
-            auto vel = new arch_b::VelocityComponent( glm::vec2 { rand_f( -0.01, 0.01 ), rand_f( -0.01, 0.01 ) } );
+            auto mov = new arch_b::MovementComponent( glm::vec2 { rand_f( -1.0, 1.0 ), rand_f( -1.0, 1.0 ) }, glm::vec2 { rand_f( -0.01, 0.01 ), rand_f( -0.01, 0.01 ) } );
             auto col = new arch_b::ColorComponent( glm::vec3 { rand_f( 0.0, 1.0 ), rand_f( 0.0, 1.0 ), rand_f( 0.0, 1.0 ) } );
 
-            e->add_component( pos );
-            e->add_component( vel );
+            e->add_component( mov );
             e->add_component( col );
 
             if ( color_shift_flag ) {
@@ -670,11 +664,11 @@ void test_b_dynamic_ramp_up() {
         auto entities = engine.get_all_entities();
         visual_shader.use();
         for ( auto e : entities ) {
-            auto pos = e->get_component<arch_b::PositionComponent>();
+            auto mov = e->get_component<arch_b::MovementComponent>();
             auto col = e->get_component<arch_b::ColorComponent>();
-            if ( pos.has_value() && col.has_value() ) {
+            if ( mov.has_value() && col.has_value() ) {
                 renderer.draw_square(
-                    pos.value()->value,
+                    mov.value()->pos,
                     col.value()->value,
                     0.05f
                 );
