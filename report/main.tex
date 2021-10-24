@@ -100,20 +100,312 @@ OpenGL 4.3 Core. This is because it is the first version of the OpenGL
 specification to add compute shaders to the core profile, which will become
 important later on for one of our architectures.
 
-% TODO: implement these so i can actually write on them!
 \section{Introduction to Tested Architectures}
 This research has chosen to focus on four key architectures. The rationale
 behind this is while it might not be exhaustive, it will provide meaningful
 data points to inform how different styles and implementations of architecture
-can affects the usability/maintainability and performance of your game.
+can affects the usability/maintainability and performance of your game. All
+code mentioned will be available on
+GitHub\footnote{https://github.com/pondodev/research-project} under the
+Unlicense License.
 
-\subsection{Pure Object Oriented}
+\subsection{Architecture A--Pure Object Oriented}
+Taking a more traditional and plain object oriented approach, we see what you
+might expect from a more standard application's codebase. Since it is very pure
+as far as object oriented architecture goes, much of the same goals of the
+paradigm carry over to this architecture--that is, we want to maximise code
+cohesion, minimise code coupling, and reduce overall code duplication. Most of
+this is to ensure that at a high level, the codebase is as maintainable as
+possible. There are a few notable parts that make up this architecture:
 
-\subsection{Object Oriented Component Pattern}
+\begin{itemize}
+    \item Engine
+    \item[] The brains of the operation. Manages entities and their associated
+            memory.
 
-\subsection{Entity Component System}
+    \item Entity
+    \item[] A base class for all entities in the architecture to inherit from.
 
-\subsection{Entity Component System With Compute Shaders}
+    \item Colour Shift Entity
+    \item[] A class which derives from the entity base class to add colour
+            shifting functionality. 
+\end{itemize}
+
+\begin{figure}
+\centering
+\begin{BVerbatim}
+class Entity {
+public:
+    Entity(
+        unsigned int _id,
+        glm::vec2 _position,
+        glm::vec2 _velocity,
+        glm::vec3 _color );
+    virtual void update();
+    unsigned int get_id();
+    glm::vec2 get_position();
+    glm::vec3 get_color();
+
+protected:
+    glm::vec3 color;
+
+private:
+    unsigned int id;
+    glm::vec2 position;
+    glm::vec2 velocity;
+};
+\end{BVerbatim}
+\caption{Architecture A Entity class declaration}
+\label{arch_a_entity_header}
+\end{figure}
+
+\begin{figure}
+\centering
+\begin{BVerbatim}
+class ColorShiftEntity : public Entity {
+public:
+    ColorShiftEntity(
+        unsigned int _id,
+        glm::vec2 _position,
+        glm::vec2 _velocity,
+        glm::vec3 _color,
+        glm::vec3 _color_velocity );
+    void update() override;
+
+private:
+    glm::vec3 color_velocity;
+};
+\end{BVerbatim}
+\caption{Architecture A ColorShiftEntity class declaration}
+\label{arch_a_color_shift_entity_header}
+\end{figure}
+
+\begin{figure}
+\centering
+\begin{BVerbatim}
+class Engine {
+public:
+    ~Engine();
+    unsigned int add_entity(
+        glm::vec2 _position,
+        glm::vec2 _velocity,
+        glm::vec3 _color );
+    unsigned int add_entity(
+        glm::vec2 _position,
+        glm::vec2 _velocity,
+        glm::vec3 _color,
+        glm::vec3 _color_velocity );
+    void remove_entity( unsigned int id );
+    void pop_entity();
+    std::vector<Entity*> get_entities();
+    void update();
+
+private:
+    unsigned int current_entity_id = 0;
+    std::vector<Entity*> entities;
+};
+\end{BVerbatim}
+\caption{Architecture A Engine class declaration}
+\label{arch_a_engine_header}
+\end{figure}
+
+Starting with the Entity class in figure \ref{arch_a_entity_header}, it contains
+some basic information required to render a given entity to the provided render
+target--a 2D position, a 2D velocity, and a colour with RGB components. We also
+have some simple getter methods for acquiring the private and protected members
+of the class, and an update method which simply will move the entity's position
+by the given velocity vector.
+
+The ColorShiftEntity class in figure \ref{arch_a_color_shift_entity_header} then
+inherits from the Entity class and adds a new member to store colour velocity.
+This colour velocity is also an RGB value which dictates how the colour of an
+entity should shift with every update. It's for this reason that we have an
+override for the update method, which will perform the same update functionality
+as the base Entity class but will also apply the colour velocity.
+
+Finally, the Engine class in figure \ref{arch_a_engine_header} which uses a
+factory-like pattern. The engine is what a programmer would primarily be
+interfacing with in order to operate the architecture. This is because it is
+where one would create, manage, and update entities. It provides a method with
+two overrides to create an entity--one override for regular entities and one
+override for colour shifting entities. There is also a method to update every
+single entity managed by the engine.
+
+\subsection{Architecture B--Object Oriented Component Pattern}
+This is an architecture many might be familiar with from general purpose engines
+such as Unity or Unreal Engine 4. The core idea at play is that pure object
+oriented approaches to game architecture aren't particularly conducive to how
+games are generally programmed. In particular, there is the idea of an entity
+having a series of "traits" which apply to it which in a purely object oriented
+architecture would normally be implemented through means of inheritance.
+However, this can be prone to many different types of issues such as deep,
+complicated inheritance trees or ambiguity introduced through diamond
+inheritance. To add to this, it becomes significantly less feasible to implement
+this kind of architecture with a language such as C\# which does not allow for
+multiple inheritance and would instead require you to use interfaces.
+
+This is the core rationale behind the component pattern in object oriented
+game architecture design--reduce the amount of inheritance required by storing
+a collection of components which define traits of an entity, inside of an
+entity. This also means that in languages like C\# which do not support
+multiple inheritance, we can still implement this pattern in a clean and
+maintainable manner. My implementation has 4 key parts:
+
+\begin{itemize}
+    \item Engine
+    \item[] Much like the pure object oriented architecture, manages the
+            creation, removal, and updating of entities.
+
+    \item Entity
+    \item[] A very bare bones class that has an id and collection of components.
+
+    \item Component Base
+    \item[] The base class from which all components that can define traits or
+            behaviour of an entity will inherit from.
+
+    \item Components
+    \item[] Child classes of the component base class that will define specific
+            traits or behaviour for entities it is applied to.
+\end{itemize}
+
+\begin{figure}
+\centering
+\begin{BVerbatim}
+class Entity {
+public:
+    Entity();
+    ~Entity();
+    unsigned int get_id();
+    void add_component( Component* c );
+    void remove_component( unsigned int id );
+    template <typename T>
+    std::optional<T*> get_component() {
+        std::optional<T*> to_return;
+
+        for ( auto c : components ) {
+            if ( typeid(*c) == typeid(T) ) {
+                to_return = (T*)c;
+                break;
+            }
+        }
+
+        return to_return;
+    }
+
+private:
+    static inline unsigned int next_id;
+    unsigned int id;
+    std::vector<Component*> components;
+};
+\end{BVerbatim}
+\caption{Architecture B Entity class declaration}
+\label{arch_b_entity_header}
+\end{figure}
+
+\begin{figure}
+\centering
+\begin{BVerbatim}
+class Component {
+public:
+    Component();
+    virtual unsigned int get_id(); // virtual so RTTI works
+
+private:
+    static inline unsigned int next_id;
+    unsigned int id;
+};
+\end{BVerbatim}
+\caption{Architecture B ComponentBase class declaration}
+\label{arch_b_component_base_header}
+\end{figure}
+
+\begin{figure}
+\centering
+\begin{BVerbatim}
+class MovementComponent : public Component {
+public:
+    MovementComponent( glm::vec2 _pos, glm::vec2 _vel );
+    void move();
+    glm::vec2 pos;
+
+private:
+    glm::vec2 vel;
+};
+
+class ColorComponent : public Component {
+public:
+    ColorComponent( glm::vec3 _value );
+    void apply_velocity( glm::vec3 vel );
+    glm::vec3 value;
+};
+
+class ColorVelocityComponent : public Component {
+public:
+    ColorVelocityComponent( glm::vec3 _value );
+    glm::vec3 value;
+};
+\end{BVerbatim}
+\caption{Architecture B Component class declarations}
+\label{arch_b_components_header}
+\end{figure}
+
+\begin{figure}
+\centering
+\begin{BVerbatim}
+class Engine {
+public:
+    ~Engine();
+    void add_entity( Entity* entity );
+    void remove_entity( unsigned int id );
+    void pop_entity();
+    std::optional<Entity*> get_entity( unsigned int id );
+    std::vector<Entity*> get_all_entities();
+    void update();
+
+private:
+    std::vector<Entity*> entities;
+};
+\end{BVerbatim}
+\caption{Architecture B Engine class declaration}
+\label{arch_b_engine_header}
+\end{figure}
+
+The Entity class is incredibly simple for the most part: an id, a vector of
+components belonging to this entity, and methods to add/remove components from
+an entity. There is one rather complex thing, however, and that is the template
+method for getting a component from an entity. This method uses run time type
+information (RTTI for short) to get an arbitrary component of a given type from
+the vector of components.
+
+The ComponentBase class in figure \ref{arch_b_component_base_header}, as
+previously mentioned, will be the base class that all components inherit from.
+It's simple for the most part, only really providing one getter method for the
+component's id. However one curiosity here is that the method to get the id is
+virtual, but we never override it in any of the classes that derive from it.
+This is due to a quirk of C++ and it's design since type information isn't
+available during run time in the same way we might expect it to be in something
+like C\# and it's reflection feature. To get around this, there is RTTI which
+can give us partial information on types during runtime, but it requires us to
+do two things: provide a pointer, and implement at least one virtual method on
+the base class to be inherited from.
+
+Components as seen in figure \ref{arch_b_components_header} all inherit from the
+ComponentBase class. This allows us to polymorphically store them in a
+collection (which is exactly what we do in the Entity class) while still
+providing unique functionality per component.
+
+Finally there is the Engine class in figure \ref{arch_b_engine_header}. Much
+like the pure object oriented architecture, the engine will manage all entities
+and their associated memory appropriately. However, a key difference is that
+creation of the entity is now an external responsibility to the engine and a
+programmer would then need to register the created entity with the engine. This
+is something I would classify as a design flaw in the implementation which, if
+used in the real world, should be remedied. However for the purposes of these
+tests it will be more than adequate to collect the necessary data.
+
+\subsection{Architecture C--Entity Component System}
+
+\subsection{Architecture D--Entity Component System With\\Compute Shaders}
 
 % TODO: collect the data!
 \section{Data}
