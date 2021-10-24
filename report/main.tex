@@ -980,6 +980,128 @@ component pattern in your own game architecture.
 
 \subsection{Architecture C}
 \subsubsection{Performance}
+Once again referring to section \ref{arch_comparison} we are able to see just
+how much faster ECS is over any other architecture. In fact not only is it
+faster, but it's \textit{significantly} faster than the next fastest
+architecture. The reasoning behind this is rather interesting, because of how
+low level this ends up getting. For starters we have our two systems which are
+always guaranteed to complete in O(n) time. Since they're both constant
+and have no bearing on each other, this makes the overall time complexity of
+the update algorithm O(n). So this would make it the same time complexity as
+Architecture A, right?
+
+This is where things start to get complicated when talking about time
+complexity measurements, and also serves as a good example of why big O notation
+and other methods of measuring time complexity shouldn't be taken as gospel and
+instead need to be understood in context. You see, in Architecture A we iterate
+over every entity and perform a simple operation on each of them, making the
+execution time O(n). In this architecture we perform two separate O(n) time
+operations one after another, which will then simplify down to completing in
+O(n) time due to both being constant. The difference between the two however is
+what n actually is. In Architecture A n is the number of entities, while in this
+architecture n is both the number of entities registered for the movement system
+and the number of entities registered for the colour shift system. The reason
+why this is important is because in this architecture, n is almost certainly
+going to be bigger than in Architecture A given the same data set. This is due
+to the two systems potentially working on the same entities multiple times for
+different things.
+
+So this architecture is slower in absolute terms when looking at the time
+complexity, and yet it's faster than Architecture A. Why is this? This has
+already been alluded to a few times earlier in this report, but cache is
+important here. Since all levels of cache are significantly faster to access
+than RAM, this makes it a prime area for optimisation with data intensive tasks.
+So how can we improve performance with the cache? The simple answer is that we
+want to make sure our data is sent to the cache by the CPU, and that as much of
+it is possible is sent. That way when it comes the time to actually perform
+these operations on the data, reads and writes on the data will be significantly
+faster which in turn makes for a faster overall algorithm.
+
+There are a few things which can influence the sending of data to the cache and
+amount that is sent, many of which ECS at it's core exploit. One such thing is
+the tesselation of data in the cache, which simply means how tightly packed the
+data can be. This is why we always ensure that the data we use in an ECS
+implementation is simple, small, and in tightly packed arrays. This increases
+the tesselation ability of a given set of data, allowing us to send more of it
+to the cache at the same time.
+
+This leads nicely onto a problem that we aim to avoid when using an ECS--cache
+misses. There are two types of cache misses that we care about: data cache
+misses and instruction cache misses. In both cases a miss happens when something
+is requested from the cache but it isn't there yet. Avoiding misses on
+instructions generally means that you want to ensure that the systems you write
+are as simple as possible. This ensures that as much of the code related to the
+system is sent into cache as possible, which makes reading what actions the CPU
+must perform next far quicker.
+
+Data misses would generally speaking be less impactful than instruction misses,
+but when the data set scales to larger and larger sizes we start to see
+increasing performance impacts due to data misses. Avoiding such misses is
+potentially more complicated for a variety of reasons. There are simpler things
+we can address such as how much data can be sent to the cache in a given call,
+which is why we try to ensure data can be packed together as tightly as
+possible. There's a much more complex and important problem we face however,
+and that's cache
+pre-fetching\footnote{This is something that I'm still not entirely clear on. This lecture provided a good starting point however: http://home.eng.iastate.edu/~zzhang/cpre581/lectures/Lecture17-1p.pdf}.
+The reason why this gets so complicated is because of variance in CPUs. You see,
+normally we might talk about how broader architectures differ such as comparing
+x86\_64 (which is mostly used in desktop computers) to the ARM family of
+architectures (which is mostly used in mobile/low power computers). However when
+we start talking about aspects of CPUs that are as low level as how we load data
+into the cache, we then need to start discussing differences in CPU
+manufacturers. You see while the specs of two CPUs, one from Intel and one from
+AMD, might look the same on paper, they can perform wildly different in
+different scenarios. This comes down to the implementation details of a CPU,
+decided by the engineers that designed the CPU. Of interest to us is the
+method of cache pre-fetching, because this indicates to us how we might want
+to write our code in order to make sure that data is reliably dispatched to the
+CPU. Admittedly, this does get into the realm of crazy low level optimisation
+so most programmers will not need to think about this. However, when your
+cache optimisations don't behave as you expect them to then this is something
+that you should bear in mind as a potential reason for the unexpected behaviour.
+
+A final thing I'll mention is that ECS lends itself particularly well to a
+compiler optimisation called inlining. The idea behind inlining is simple: move
+the contents of a function call to where the function should be normally be
+called from. I'm of course glossing over this massively, but this is the general
+idea behind it, and lets us understand the kind of performance benefits that it
+can bring. At a low level, functions don't exist in the way that we think of
+them as existing. This is because assembly, the higher level abstraction of raw
+machine code, generally only has a very bare bones selection of instructions at
+it's disposal. This allows it to do everything that we expect our computers to
+do, but does mean writing code can be difficult due to how verbose and
+difficult to maintain it can be (which is why languages such as C first came to
+be). So functions don't really exist in assembly, but we do have ways around
+this so that we can still reuse generic code for multiple purposes. This is
+done with a structure implemented on the hardware (though sometimes you find
+software implementations too) called a stack, which is pretty much the same as
+something like the stack collection found in the C++ standard library. At a high
+level, when we wish to call a function we will push the current memory address
+found at the program counter onto the stack. Then we will jump to the address of
+the function, execute the code, and then upon returning we will pop the address
+off the stack and set the program counter to that address. This works really
+well (and might I add, is kinda cool) but comes with associated overhead. If
+you're constantly calling functions or methods then you run into the issue of
+constantly jumping to arbitrary memory addresses, pushing and popping off the
+stack, and some other things I've not mentioned for the sake of simplicity.
+So by inlining a function call, we now end up increasing the speed by virtue
+of removing overhead associated with calling a function.
+
+There are, of course, caveats. Inlining isn't some pancea that can solve your
+performance issues. In fact, it's generally a fairly niche usecase where
+inlining can improve performance by a significant amount. This is compounded
+by the fact that inlining manually, if you're not careful, can have knock-on
+effects which negatively affect your code. Generally speaking, programmers
+will simply allow the compiler to automatically inline what it deems as
+reasonable (and indeed, they're all pretty good at that these days). This all
+does come at a cost, and that cost is space. Due to the literal duplication of
+code, you'll very likely see some amount of increase in size of your compiled
+binary. This generally might not be an issue on modern PCs, but is all the
+same something to consider depending on the application you're writing for
+(eg. if you're writing a demo for some niche hardware then size will become
+very important).
+
+% talk about inlining here too
 
 \subsubsection{Usability and Maintainability}
 
