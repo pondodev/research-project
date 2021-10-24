@@ -6,9 +6,9 @@
 namespace arch_c {
     typedef uint32_t Entity;
     typedef enum {
-        Movable      = 0x0010,
-        Color         = 0x0100,
-        ColorVelocity = 0x1000
+        Movable       = 0b100,
+        Color         = 0b010,
+        ColorVelocity = 0b001
     } ComponentFlag;
 }
 

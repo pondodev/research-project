@@ -404,27 +404,177 @@ used in the real world, should be remedied. However for the purposes of these
 tests it will be more than adequate to collect the necessary data.
 
 \subsection{Architecture C--Entity Component System}
+While by no means a new approach to game architecture with uses of it dating
+back to 2001-2003\footnote{http://t-machine.org/index.php/2007/09/03/entity-systems-are-the-future-of-mmog-development-part-1/},
+it is only in recent times where we have seen it truly come into it's own.
+Entity component systems, often shortened down to ECS, are a performance first
+architecture design which foregoes object oriented design in favour of data
+oriented design. The key difference between the two paradigms is that while
+object oriented design prioritises concepts such as ownership through means of
+abstraction and encapsulation, data oriented design chooses to separate data
+entirely from it's functionality. This is done through the 3 parts of an ECS
+implementation:
+
+\begin{itemize}
+    \item Entities
+    \item[] Abstract identifiers that are used to denote ownership over a
+            registered component in the architecture.
+
+    \item Components
+    \item[] Simple, tightly packed data packets that can be considered a "state"
+            belonging to an entity.
+
+    \item Systems
+    \item[] Functionality which operates over a collection of entities and it's
+            select components that are registered to a given system, applying
+            logic and functionality to the components.
+\end{itemize}
+
+\begin{figure}
+\centering
+\begin{BVerbatim}
+typedef uint32_t Entity;
+typedef enum {
+    Movable       = 0b100,
+    Color         = 0b010,
+    ColorVelocity = 0b001
+} ComponentFlag;
+\end{BVerbatim}
+\caption{Architecture C typedefs}
+\label{arch_c_typedefs}
+\end{figure}
+
+\begin{figure}
+\centering
+\begin{BVerbatim}
+struct MovableComponent {
+    float pos_x;
+    float pos_y;
+    float vel_x;
+    float vel_y;
+};
+
+struct ColorComponent {
+    float r;
+    float g;
+    float b;
+};
+
+struct ColorVelocityComponent {
+    float r;
+    float g;
+    float b;
+};
+\end{BVerbatim}
+\caption{Architecture C component struct declarations}
+\label{arch_c_components_header}
+\end{figure}
+
+\begin{figure}
+\centering
+\begin{BVerbatim}
+class Engine {
+public:
+    Engine();
+    ~Engine();
+    std::optional<Entity> add_entity();
+    void remove_entity( Entity id );
+    int entity_has_component( Entity id, ComponentFlag component );
+
+    void movement_system();
+    void color_shift_system();
+
+    MovableComponent* add_movable_component( Entity id );
+    ColorComponent* add_color_component( Entity id );
+    ColorVelocityComponent* add_color_velocity_component( Entity id );
+
+    MovableComponent* get_movable_component( Entity id );
+    ColorComponent* get_color_component( Entity id );
+    ColorVelocityComponent* get_color_velocity_component( Entity id );
+
+private:
+    std::queue<Entity> available_entities;
+    std::vector<Entity> movement_system_entities;
+    std::vector<Entity> color_shift_system_entities;
+
+    ComponentFlag* entity_component_flags;
+    MovableComponent* movable_components;
+    ColorComponent* color_components;
+    ColorVelocityComponent* color_velocity_components;
+};
+\end{BVerbatim}
+\caption{Architecture C Engine class declaration}
+\label{arch_c_engine_header}
+\end{figure}
+
+The first thing of note are a couple of simple typedefs that have been created,
+as seen in figure \ref{arch_c_typedefs}. The first is for entities, which
+defines their id as an unsigned 32-bit integer. The second is an enum flag set
+which we can bitwise-or together to indicate what components have been set on an
+entity.
+
+Components, as mentioned before, are incredibly simple. Figure
+\ref{arch_c_components_header} shows that each component is nothing more than a
+struct with primitive data within.
+
+The Engine class in figure \ref{arch_c_engine_header} is actually somewhat of a
+simplification of what you might expect in a more general purpose ECS
+implementation. This is because normally there are separate manager classes for
+each of the parts of an ECS, however for the purpose of this research I have
+elected to simplify it down for demonstration purposes and simplicity.
+
+Within this Engine class we have some methods for adding and removing entities,
+functionality normally delegated to an entity manager. We also have parts of
+what might be expected from a component manager in the form of methods to
+add/get components for an entity and tightly packed arrays which contain the
+components. The final piece of the puzzle then are the systems, which come in
+two parts. First are the two system methods which perform the actual
+functionality of a given system, and second are the vectors which contain all
+the entity ids which are registered to be worked on by a given system.
+
+As a final note, I'll mention that I owe a great deal to Austin Morlan as their
+ECS implementation\footnote{https://austinmorlan.com/posts/entity\_component\_system/}
+inspired much of my own.
 
 \subsection{Architecture D--Entity Component System With\\Compute Shaders}
+This is identical to Architecture A with one key difference: we use the GPU to
+run the systems in the ECS implementation. In theory this should provide
+incredible performance benefits to our architecture since GPUs are incredibly
+fast at parallel floating point computations. However, much to my own 
+disappointment, I was not able to implement it fully into an ECS implementation
+for reasons that will be mentioned later. I have, however, successfully written
+computer shaders in OpenGL\footnote{https://github.com/pondodev/opengl\_compute}
+so will be able to comment more on other aspects of it. This does unfortunately
+mean that I have been unable to collect any data on it and as such, will not be
+able to report on the performance of it.
 
-% TODO: collect the data!
 \section{Data}
-\subsection{Pure Object Oriented}
+\subsection{Architecture A}
 
-\subsection{Object Oriented Component Pattern}
+\subsection{Architecture B}
 
-\subsection{Entity Component System}
-
-\subsection{Entity Component System With Compute Shaders}
+\subsection{Architecture C}
 
 \section{Analysis}
-\subsection{Pure Object Oriented}
+\subsection{Architecture A}
+\subsubsection{Performance}
 
-\subsection{Object Oriented Component Pattern}
+\subsubsection{Usability and Maintainability}
 
-\subsection{Entity Component System}
+\subsection{Architecture B}
+\subsubsection{Performance}
 
-\subsection{Entity Component System With Compute Shaders}
+\subsubsection{Usability and Maintainability}
+
+\subsection{Architecture C}
+\subsubsection{Performance}
+
+\subsubsection{Usability and Maintainability}
+
+\subsection{Architecture D}
+\subsubsection{Performance}
+
+\subsubsection{Usability and Maintainability}
 
 \section{Conclusion}
 
