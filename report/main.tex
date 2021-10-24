@@ -733,6 +733,102 @@ The following sections display the data visualisations for each test run.
 
 \clearpage
 
+\subsection{Cachegrind Output}
+\begin{figure}[!h]
+\centering
+\begin{BVerbatim}
+==1650== I   refs:      15,279,334,589
+==1650== I1  misses:           768,022
+==1650== LLi misses:           574,626
+==1650== I1  miss rate:           0.01%
+==1650== LLi miss rate:           0.00%
+==1650== 
+==1650== D   refs:       5,911,147,698  (4,233,875,171 rd   + 1,677,272,527 wr)
+==1650== D1  misses:       230,427,009  (  229,725,605 rd   +       701,404 wr)
+==1650== LLd misses:        65,787,658  (   65,326,385 rd   +       461,273 wr)
+==1650== D1  miss rate:            3.9% (          5.4%     +           0.0%  )
+==1650== LLd miss rate:            1.1% (          1.5%     +           0.0%  )
+==1650== 
+==1650== LL refs:          231,195,031  (  230,493,627 rd   +       701,404 wr)
+==1650== LL misses:         66,362,284  (   65,901,011 rd   +       461,273 wr)
+==1650== LL miss rate:             0.3% (          0.3%     +           0.0%  )
+\end{BVerbatim}
+\caption{Architecture A cachegrind output (AMD Ryzen 5 3600)}
+\label{arch_a_cachegrind_pc}
+\end{figure}
+
+\begin{figure}[!h]
+\centering
+\begin{BVerbatim}
+\end{BVerbatim}
+\caption{Architecture A cachegrind output (Intel i5 8250U)}
+\label{arch_a_cachegrind_laptop}
+\end{figure}
+
+\begin{figure}[!h]
+\centering
+\begin{BVerbatim}
+==1738== I   refs:      17,093,466,994
+==1738== I1  misses:           285,064
+==1738== LLi misses:           238,882
+==1738== I1  miss rate:           0.00%
+==1738== LLi miss rate:           0.00%
+==1738== 
+==1738== D   refs:       6,048,221,487  (5,025,865,701 rd   + 1,022,355,786 wr)
+==1738== D1  misses:       221,749,747  (  220,647,937 rd   +     1,101,810 wr)
+==1738== LLd misses:       124,021,475  (  123,094,901 rd   +       926,574 wr)
+==1738== D1  miss rate:            3.7% (          4.4%     +           0.1%  )
+==1738== LLd miss rate:            2.1% (          2.4%     +           0.1%  )
+==1738== 
+==1738== LL refs:          222,034,811  (  220,933,001 rd   +     1,101,810 wr)
+==1738== LL misses:        124,260,357  (  123,333,783 rd   +       926,574 wr)
+==1738== LL miss rate:             0.5% (          0.6%     +           0.1%  )
+\end{BVerbatim}
+\caption{Architecture B cachegrind output (AMD Ryzen 5 3600)}
+\label{arch_b_cachegrind_pc}
+\end{figure}
+
+\begin{figure}[!h]
+\centering
+\begin{BVerbatim}
+\end{BVerbatim}
+\caption{Architecture B cachegrind output (Intel i5 8250U)}
+\label{arch_b_cachegrind_laptop}
+\end{figure}
+
+\begin{figure}[!h]
+\centering
+\begin{BVerbatim}
+==1808== I   refs:      20,674,747,170
+==1808== I1  misses:         1,059,201
+==1808== LLi misses:           252,983
+==1808== I1  miss rate:           0.01%
+==1808== LLi miss rate:           0.00%
+==1808== 
+==1808== D   refs:       6,047,394,193  (4,392,478,824 rd   + 1,654,915,369 wr)
+==1808== D1  misses:       227,381,637  (  226,639,670 rd   +       741,967 wr)
+==1808== LLd misses:           826,630  (      419,239 rd   +       407,391 wr)
+==1808== D1  miss rate:            3.8% (          5.2%     +           0.0%  )
+==1808== LLd miss rate:            0.0% (          0.0%     +           0.0%  )
+==1808== 
+==1808== LL refs:          228,440,838  (  227,698,871 rd   +       741,967 wr)
+==1808== LL misses:          1,079,613  (      672,222 rd   +       407,391 wr)
+==1808== LL miss rate:             0.0% (          0.0%     +           0.0%  )
+\end{BVerbatim}
+\caption{Architecture C cachegrind output (AMD Ryzen 5 3600)}
+\label{arch_c_cachegrind_pc}
+\end{figure}
+
+\begin{figure}[!h]
+\centering
+\begin{BVerbatim}
+\end{BVerbatim}
+\caption{Architecture C cachegrind output (Intel i5 8250U)}
+\label{arch_c_cachegrind_laptop}
+\end{figure}
+
+\clearpage
+
 \section{Analysis}
 \subsection{Architecture A}
 \subsubsection{Performance}
