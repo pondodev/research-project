@@ -63,7 +63,7 @@ velocity. When an entity reaches the edge of the window, it will then loop back
 around to the other side of the window. To add an extra layer of complexity to
 the processing of the entities, a random amount of entities will also colour
 shift while moving. Data will be tracked in the form of average cycles per
-second and the output provided by valgrind's cachegrind tool.
+second and time to complete in seconds.
 
 To ensure we collect as much useful data as possible, I will extend this basis
 for testing in three key ways:
@@ -72,6 +72,8 @@ for testing in three key ways:
 The test will be run with 250,000 entities in the simulation over the course of
 one minute. The purpose of this test is to understand at a high level how
 compiler optimisation level affects the speed of each architecture.
+Additionally, the test will be run through valgrind's cachegrind tool in order
+to obtain cache profiling information for each architecture.
 
 \subsubsection{Ramp-up}
 There will be multiple tests run for each architecture, starting at 100,000
@@ -557,43 +559,43 @@ The following sections display the data visualisations for each test run.
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.5]{Architecture A Static (AMD Ryzen 5 3600).png}
-\label{arch_a_static_pc}
 \caption{Architecture A Static Test (AMD Ryzen 5 3600)}
+\label{arch_a_static_pc}
 \end{figure}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.5]{Architecture A Static (Intel i5 8250U).png}
-\label{arch_a_static_laptop}
 \caption{Architecture A Static Test (Intel i5 8250U)}
+\label{arch_a_static_laptop}
 \end{figure}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.5]{Architecture A Ramp Up (AMD Ryzen 5 3600).png}
-\label{arch_a_ramp_up_pc}
 \caption{Architecture A Ramp Up Test (AMD Ryzen 5 3600)}
+\label{arch_a_ramp_up_pc}
 \end{figure}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.5]{Architecture A Ramp Up (Intel i5 8250U).png}
-\label{arch_a_ramp_up_laptop}
 \caption{Architecture A Ramp Up Test (Intel i5 8250U)}
+\label{arch_a_ramp_up_laptop}
 \end{figure}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.5]{Architecture A Dynamic Ramp Up (AMD Ryzen 5 3600).png}
-\label{arch_a_dynamic_ramp_up_pc}
 \caption{Architecture A Dynamic Ramp Up Test (AMD Ryzen 5 3600)}
+\label{arch_a_dynamic_ramp_up_pc}
 \end{figure}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.5]{Architecture A Dynamic Ramp Up (Intel i5 8250U).png}
-\label{arch_a_dynamic_ramp_up_laptop}
 \caption{Architecture A Dynamic Ramp Up Test (Intel i5 8250U)}
+\label{arch_a_dynamic_ramp_up_laptop}
 \end{figure}
 
 \clearpage
@@ -602,43 +604,43 @@ The following sections display the data visualisations for each test run.
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.5]{Architecture B Static (AMD Ryzen 5 3600).png}
-\label{arch_b_static_pc}
 \caption{Architecture B Static Test (AMD Ryzen 5 3600)}
+\label{arch_b_static_pc}
 \end{figure}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.5]{Architecture B Static (Intel i5 8250U).png}
-\label{arch_b_static_laptop}
 \caption{Architecture B Static Test (Intel i5 8250U)}
+\label{arch_b_static_laptop}
 \end{figure}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.5]{Architecture B Ramp Up (AMD Ryzen 5 3600).png}
-\label{arch_b_ramp_up_pc}
 \caption{Architecture B Ramp Up Test (AMD Ryzen 5 3600)}
+\label{arch_b_ramp_up_pc}
 \end{figure}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.5]{Architecture B Ramp Up (Intel i5 8250U).png}
-\label{arch_b_ramp_up_laptop}
 \caption{Architecture B Ramp Up Test (Intel i5 8250U)}
+\label{arch_b_ramp_up_laptop}
 \end{figure}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.5]{Architecture B Dynamic Ramp Up (AMD Ryzen 5 3600).png}
-\label{arch_b_dynamic_ramp_up_pc}
 \caption{Architecture B Dynamic Ramp Up Test (AMD Ryzen 5 3600)}
+\label{arch_b_dynamic_ramp_up_pc}
 \end{figure}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.5]{Architecture B Dynamic Ramp Up (Intel i5 8250U).png}
-\label{arch_b_dynamic_ramp_up_laptop}
 \caption{Architecture B Dynamic Ramp Up Test (Intel i5 8250U)}
+\label{arch_b_dynamic_ramp_up_laptop}
 \end{figure}
 
 \clearpage
@@ -647,88 +649,89 @@ The following sections display the data visualisations for each test run.
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.5]{Architecture C Static (AMD Ryzen 5 3600).png}
-\label{arch_c_static_pc}
 \caption{Architecture C Static Test (AMD Ryzen 5 3600)}
+\label{arch_c_static_pc}
 \end{figure}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.5]{Architecture C Static (Intel i5 8250U).png}
-\label{arch_c_static_laptop}
 \caption{Architecture C Static Test (Intel i5 8250U)}
+\label{arch_c_static_laptop}
 \end{figure}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.5]{Architecture C Ramp Up (AMD Ryzen 5 3600).png}
-\label{arch_c_ramp_up_pc}
 \caption{Architecture C Ramp Up Test (AMD Ryzen 5 3600)}
+\label{arch_c_ramp_up_pc}
 \end{figure}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.5]{Architecture C Ramp Up (Intel i5 8250U).png}
-\label{arch_c_ramp_up_laptop}
 \caption{Architecture C Ramp Up Test (Intel i5 8250U)}
+\label{arch_c_ramp_up_laptop}
 \end{figure}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.5]{Architecture C Dynamic Ramp Up (AMD Ryzen 5 3600).png}
-\label{arch_c_dynamic_ramp_up_pc}
 \caption{Architecture C Dynamic Ramp Up Test (AMD Ryzen 5 3600)}
+\label{arch_c_dynamic_ramp_up_pc}
 \end{figure}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.5]{Architecture C Dynamic Ramp Up (Intel i5 8250U).png}
-\label{arch_c_dynamic_ramp_up_laptop}
 \caption{Architecture C Dynamic Ramp Up Test (Intel i5 8250U)}
+\label{arch_c_dynamic_ramp_up_laptop}
 \end{figure}
 
 \clearpage
 
 \subsection{Architecture Comparisons}
+\label{arch_comparison}
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.5]{O3 Static Benchmarks (AMD Ryzen 5 3600).png}
-\label{pc_static_tests}
 \caption{Static Tests (AMD Ryzen 5 3600)}
+\label{pc_static_tests}
 \end{figure}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.5]{O3 Static Benchmarks (Intel i5 8250U).png}
-\label{lapotp_static_tests}
 \caption{Static Tests (Intel i5 8250U)}
+\label{laptop_static_tests}
 \end{figure}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.5]{O3 Ramp Up Benchmarks (AMD Ryzen 5 3600).png}
-\label{pc_ramp_up_tests}
 \caption{Ramp Up Tests (AMD Ryzen 5 3600)}
+\label{pc_ramp_up_tests}
 \end{figure}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.5]{O3 Ramp Up Benchmarks (Intel i5 8250U).png}
-\label{lapotp_ramp_up_tests}
 \caption{Ramp Up Tests (Intel i5 8250U)}
+\label{laptop_ramp_up_tests}
 \end{figure}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.5]{O3 Dynamic Ramp Up Benchmarks (AMD Ryzen 5 3600).png}
-\label{pc_dynamic_ramp_up_tests}
 \caption{Dynamic Ramp Up Tests (AMD Ryzen 5 3600)}
+\label{pc_dynamic_ramp_up_tests}
 \end{figure}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.5]{O3 Dynamic Ramp Up Benchmarks (Intel i5 8250U).png}
-\label{lapotp_dynamic_ramp_up_tests}
 \caption{Dynamic Ramp Up Tests (Intel i5 8250U)}
+\label{laptop_dynamic_ramp_up_tests}
 \end{figure}
 
 \clearpage
@@ -737,21 +740,21 @@ The following sections display the data visualisations for each test run.
 \begin{figure}[!h]
 \centering
 \begin{BVerbatim}
-==1650== I   refs:      15,279,334,589
-==1650== I1  misses:           768,022
-==1650== LLi misses:           574,626
-==1650== I1  miss rate:           0.01%
-==1650== LLi miss rate:           0.00%
-==1650== 
-==1650== D   refs:       5,911,147,698  (4,233,875,171 rd   + 1,677,272,527 wr)
-==1650== D1  misses:       230,427,009  (  229,725,605 rd   +       701,404 wr)
-==1650== LLd misses:        65,787,658  (   65,326,385 rd   +       461,273 wr)
-==1650== D1  miss rate:            3.9% (          5.4%     +           0.0%  )
-==1650== LLd miss rate:            1.1% (          1.5%     +           0.0%  )
-==1650== 
-==1650== LL refs:          231,195,031  (  230,493,627 rd   +       701,404 wr)
-==1650== LL misses:         66,362,284  (   65,901,011 rd   +       461,273 wr)
-==1650== LL miss rate:             0.3% (          0.3%     +           0.0%  )
+I   refs:      15,279,334,589
+I1  misses:           768,022
+LLi misses:           574,626
+I1  miss rate:           0.01%
+LLi miss rate:           0.00%
+
+D   refs:       5,911,147,698  (4,233,875,171 rd   + 1,677,272,527 wr)
+D1  misses:       230,427,009  (  229,725,605 rd   +       701,404 wr)
+LLd misses:        65,787,658  (   65,326,385 rd   +       461,273 wr)
+D1  miss rate:            3.9% (          5.4%     +           0.0%  )
+LLd miss rate:            1.1% (          1.5%     +           0.0%  )
+
+LL refs:          231,195,031  (  230,493,627 rd   +       701,404 wr)
+LL misses:         66,362,284  (   65,901,011 rd   +       461,273 wr)
+LL miss rate:             0.3% (          0.3%     +           0.0%  )
 \end{BVerbatim}
 \caption{Architecture A cachegrind output (AMD Ryzen 5 3600)}
 \label{arch_a_cachegrind_pc}
@@ -760,21 +763,21 @@ The following sections display the data visualisations for each test run.
 \begin{figure}[!h]
 \centering
 \begin{BVerbatim}
-==11887== I   refs:      11,673,979,882
-==11887== I1  misses:           108,417
-==11887== LLi misses:            45,870
-==11887== I1  miss rate:           0.00%
-==11887== LLi miss rate:           0.00%
-==11887== 
-==11887== D   refs:       4,506,264,005  (3,233,764,491 rd   + 1,272,499,514 wr)
-==11887== D1  misses:       174,092,870  (  173,478,074 rd   +       614,796 wr)
-==11887== LLd misses:       172,471,117  (  171,946,373 rd   +       524,744 wr)
-==11887== D1  miss rate:            3.9% (          5.4%     +           0.0%  )
-==11887== LLd miss rate:            3.8% (          5.3%     +           0.0%  )
-==11887== 
-==11887== LL refs:          174,201,287  (  173,586,491 rd   +       614,796 wr)
-==11887== LL misses:        172,516,987  (  171,992,243 rd   +       524,744 wr)
-==11887== LL miss rate:             1.1% (          1.2%     +           0.0%  )
+I   refs:      11,673,979,882
+I1  misses:           108,417
+LLi misses:            45,870
+I1  miss rate:           0.00%
+LLi miss rate:           0.00%
+
+D   refs:       4,506,264,005  (3,233,764,491 rd   + 1,272,499,514 wr)
+D1  misses:       174,092,870  (  173,478,074 rd   +       614,796 wr)
+LLd misses:       172,471,117  (  171,946,373 rd   +       524,744 wr)
+D1  miss rate:            3.9% (          5.4%     +           0.0%  )
+LLd miss rate:            3.8% (          5.3%     +           0.0%  )
+
+LL refs:          174,201,287  (  173,586,491 rd   +       614,796 wr)
+LL misses:        172,516,987  (  171,992,243 rd   +       524,744 wr)
+LL miss rate:             1.1% (          1.2%     +           0.0%  )
 \end{BVerbatim}
 \caption{Architecture A cachegrind output (Intel i5 8250U)}
 \label{arch_a_cachegrind_laptop}
@@ -783,21 +786,21 @@ The following sections display the data visualisations for each test run.
 \begin{figure}[!h]
 \centering
 \begin{BVerbatim}
-==1738== I   refs:      17,093,466,994
-==1738== I1  misses:           285,064
-==1738== LLi misses:           238,882
-==1738== I1  miss rate:           0.00%
-==1738== LLi miss rate:           0.00%
-==1738== 
-==1738== D   refs:       6,048,221,487  (5,025,865,701 rd   + 1,022,355,786 wr)
-==1738== D1  misses:       221,749,747  (  220,647,937 rd   +     1,101,810 wr)
-==1738== LLd misses:       124,021,475  (  123,094,901 rd   +       926,574 wr)
-==1738== D1  miss rate:            3.7% (          4.4%     +           0.1%  )
-==1738== LLd miss rate:            2.1% (          2.4%     +           0.1%  )
-==1738== 
-==1738== LL refs:          222,034,811  (  220,933,001 rd   +     1,101,810 wr)
-==1738== LL misses:        124,260,357  (  123,333,783 rd   +       926,574 wr)
-==1738== LL miss rate:             0.5% (          0.6%     +           0.1%  )
+I   refs:      17,093,466,994
+I1  misses:           285,064
+LLi misses:           238,882
+I1  miss rate:           0.00%
+LLi miss rate:           0.00%
+
+D   refs:       6,048,221,487  (5,025,865,701 rd   + 1,022,355,786 wr)
+D1  misses:       221,749,747  (  220,647,937 rd   +     1,101,810 wr)
+LLd misses:       124,021,475  (  123,094,901 rd   +       926,574 wr)
+D1  miss rate:            3.7% (          4.4%     +           0.1%  )
+LLd miss rate:            2.1% (          2.4%     +           0.1%  )
+
+LL refs:          222,034,811  (  220,933,001 rd   +     1,101,810 wr)
+LL misses:        124,260,357  (  123,333,783 rd   +       926,574 wr)
+LL miss rate:             0.5% (          0.6%     +           0.1%  )
 \end{BVerbatim}
 \caption{Architecture B cachegrind output (AMD Ryzen 5 3600)}
 \label{arch_b_cachegrind_pc}
@@ -806,21 +809,21 @@ The following sections display the data visualisations for each test run.
 \begin{figure}[!h]
 \centering
 \begin{BVerbatim}
-==21137== I   refs:      14,178,150,149
-==21137== I1  misses:           110,258
-==21137== LLi misses:            47,501
-==21137== I1  miss rate:           0.00%
-==21137== LLi miss rate:           0.00%
-==21137== 
-==21137== D   refs:       5,006,378,567  (4,162,894,790 rd   + 843,483,777 wr)
-==21137== D1  misses:       181,408,674  (  180,305,799 rd   +   1,102,875 wr)
-==21137== LLd misses:       179,883,519  (  178,870,475 rd   +   1,013,044 wr)
-==21137== D1  miss rate:            3.6% (          4.3%     +         0.1%  )
-==21137== LLd miss rate:            3.6% (          4.3%     +         0.1%  )
-==21137== 
-==21137== LL refs:          181,518,932  (  180,416,057 rd   +   1,102,875 wr)
-==21137== LL misses:        179,931,020  (  178,917,976 rd   +   1,013,044 wr)
-==21137== LL miss rate:             0.9% (          1.0%     +         0.1%  )
+I   refs:      14,178,150,149
+I1  misses:           110,258
+LLi misses:            47,501
+I1  miss rate:           0.00%
+LLi miss rate:           0.00%
+
+D   refs:       5,006,378,567  (4,162,894,790 rd   + 843,483,777 wr)
+D1  misses:       181,408,674  (  180,305,799 rd   +   1,102,875 wr)
+LLd misses:       179,883,519  (  178,870,475 rd   +   1,013,044 wr)
+D1  miss rate:            3.6% (          4.3%     +         0.1%  )
+LLd miss rate:            3.6% (          4.3%     +         0.1%  )
+
+LL refs:          181,518,932  (  180,416,057 rd   +   1,102,875 wr)
+LL misses:        179,931,020  (  178,917,976 rd   +   1,013,044 wr)
+LL miss rate:             0.9% (          1.0%     +         0.1%  )
 \end{BVerbatim}
 \caption{Architecture B cachegrind output (Intel i5 8250U)}
 \label{arch_b_cachegrind_laptop}
@@ -829,21 +832,21 @@ The following sections display the data visualisations for each test run.
 \begin{figure}[!h]
 \centering
 \begin{BVerbatim}
-==1808== I   refs:      20,674,747,170
-==1808== I1  misses:         1,059,201
-==1808== LLi misses:           252,983
-==1808== I1  miss rate:           0.01%
-==1808== LLi miss rate:           0.00%
-==1808== 
-==1808== D   refs:       6,047,394,193  (4,392,478,824 rd   + 1,654,915,369 wr)
-==1808== D1  misses:       227,381,637  (  226,639,670 rd   +       741,967 wr)
-==1808== LLd misses:           826,630  (      419,239 rd   +       407,391 wr)
-==1808== D1  miss rate:            3.8% (          5.2%     +           0.0%  )
-==1808== LLd miss rate:            0.0% (          0.0%     +           0.0%  )
-==1808== 
-==1808== LL refs:          228,440,838  (  227,698,871 rd   +       741,967 wr)
-==1808== LL misses:          1,079,613  (      672,222 rd   +       407,391 wr)
-==1808== LL miss rate:             0.0% (          0.0%     +           0.0%  )
+I   refs:      20,674,747,170
+I1  misses:         1,059,201
+LLi misses:           252,983
+I1  miss rate:           0.01%
+LLi miss rate:           0.00%
+
+D   refs:       6,047,394,193  (4,392,478,824 rd   + 1,654,915,369 wr)
+D1  misses:       227,381,637  (  226,639,670 rd   +       741,967 wr)
+LLd misses:           826,630  (      419,239 rd   +       407,391 wr)
+D1  miss rate:            3.8% (          5.2%     +           0.0%  )
+LLd miss rate:            0.0% (          0.0%     +           0.0%  )
+
+LL refs:          228,440,838  (  227,698,871 rd   +       741,967 wr)
+LL misses:          1,079,613  (      672,222 rd   +       407,391 wr)
+LL miss rate:             0.0% (          0.0%     +           0.0%  )
 \end{BVerbatim}
 \caption{Architecture C cachegrind output (AMD Ryzen 5 3600)}
 \label{arch_c_cachegrind_pc}
@@ -852,21 +855,21 @@ The following sections display the data visualisations for each test run.
 \begin{figure}[!h]
 \centering
 \begin{BVerbatim}
-==29492== I   refs:      13,928,271,322
-==29492== I1  misses:           108,626
-==29492== LLi misses:            45,786
-==29492== I1  miss rate:           0.00%
-==29492== LLi miss rate:           0.00%
-==29492== 
-==29492== D   refs:       4,087,370,472  (2,971,977,825 rd   + 1,115,392,647 wr)
-==29492== D1  misses:       152,070,396  (  151,456,130 rd   +       614,266 wr)
-==29492== LLd misses:       150,530,736  (  149,987,229 rd   +       543,507 wr)
-==29492== D1  miss rate:            3.7% (          5.1%     +           0.1%  )
-==29492== LLd miss rate:            3.7% (          5.0%     +           0.0%  )
-==29492== 
-==29492== LL refs:          152,179,022  (  151,564,756 rd   +       614,266 wr)
-==29492== LL misses:        150,576,522  (  150,033,015 rd   +       543,507 wr)
-==29492== LL miss rate:             0.8% (          0.9%     +           0.0%  )
+I   refs:      13,928,271,322
+I1  misses:           108,626
+LLi misses:            45,786
+I1  miss rate:           0.00%
+LLi miss rate:           0.00%
+
+D   refs:       4,087,370,472  (2,971,977,825 rd   + 1,115,392,647 wr)
+D1  misses:       152,070,396  (  151,456,130 rd   +       614,266 wr)
+LLd misses:       150,530,736  (  149,987,229 rd   +       543,507 wr)
+D1  miss rate:            3.7% (          5.1%     +           0.1%  )
+LLd miss rate:            3.7% (          5.0%     +           0.0%  )
+
+LL refs:          152,179,022  (  151,564,756 rd   +       614,266 wr)
+LL misses:        150,576,522  (  150,033,015 rd   +       543,507 wr)
+LL miss rate:             0.8% (          0.9%     +           0.0%  )
 \end{BVerbatim}
 \caption{Architecture C cachegrind output (Intel i5 8250U)}
 \label{arch_c_cachegrind_laptop}
@@ -877,11 +880,101 @@ The following sections display the data visualisations for each test run.
 \section{Analysis}
 \subsection{Architecture A}
 \subsubsection{Performance}
+It would appear through the data collected and presented in section
+\ref{arch_comparison} that Architecture A sits squarely in the middle of the
+road between all of the architectures being compared. No doubt, a part of this
+lies within the relative simplicity of the implementation compared to the
+others. Most notably, within the engine every entity is stored inside of the
+same vector. Since vectors are, according to the C++ standard, tightly packed
+collections, in theory the data contained within each entity could be dispatched
+to the cache for faster access. I must stress though that this is entirely in
+theory, since cache performance is not only CPU architecture dependant, but also
+manufacturer dependant. Differences in how cache pre-fetching occurs will
+massively affect whether a specific collection of data ends up being dispatched
+to the cache or not, which in turn can have a large impact on performance.
+
+There's also very little in the way of algorithmic complexity since all
+difference in functionality between the entities are handled through means of
+polymorphism. This allows us to simply perform a single loop over the collection
+of entities to achieve the desired functionality in O(n) time.
 
 \subsubsection{Usability and Maintainability}
 
 \subsection{Architecture B}
 \subsubsection{Performance}
+Again referring to section \ref{arch_comparison}, it's incredibly clear just
+how much worse this architecture performs. It reliably comes last in every test,
+and by incredibly large margins. Analysing figures \ref{arch_b_cachegrind_pc}
+and \ref{arch_b_cachegrind_laptop} we can see that there are a few cache misses
+which no doubt has an impact on performance, but I posit that the biggest impact
+on performance is actually the algorithmic complexity of the implementation.
+Consider the following implementation of the Engine class' update method:
+
+\bigskip
+
+\begin{BVerbatim}
+void Engine::update() {
+    for ( auto e : entities ) {
+        auto mov = e->get_component<MovementComponent>();
+        auto col = e->get_component<ColorComponent>();
+        auto col_vel = e->get_component<ColorVelocityComponent>();
+
+        if ( mov.has_value() ) mov.value()->move();
+
+        if ( col.has_value() && col_vel.has_value() ) {
+            col.value()->apply_velocity( col_vel.value()->value );
+        }
+    }
+}
+\end{BVerbatim}
+
+\bigskip
+
+This is a simple loop in O(n) time over a collection of entities, which in of
+itself is not unusual--every implementation does this for all of it's entities
+as well. The more interesting part for us however is the get get\_component
+calls, of which there are 3 of them. If we have a look at the implementation of
+this template method then we would find the following:
+
+\bigskip
+
+\begin{BVerbatim}
+template <typename T>
+std::optional<T*> get_component() {
+    std::optional<T*> to_return;
+
+    for ( auto c : components ) {
+        if ( typeid(*c) == typeid(T) ) {
+            to_return = (T*)c;
+            break;
+        }
+    }
+
+    return to_return;
+}
+\end{BVerbatim}
+
+\bigskip
+
+This is another algorithm which in this case has a worst case time complexity
+of O(n). This means that our update method now has a worst case time complexity
+of O(n(x+y+z)) which is, to put it bluntly, real bad. This is only compounded by
+the fact that not every entity will have a ColorVelocityComponent, which means
+that the search time for it on those entities will always be O(n). There are
+absolutely improvements that can be made to this such as a flag system similar
+to my ECS implementation's which will add a very fast check to see if a
+component exists on an entity. This gets complicated quickly however and can
+affect extensibility due to a need to register components somewhere in the
+architecture. This is absolutely possible, but still not entirely ideal.
+
+As an aside, this is interesting to note when thinking in the context of a
+general purpose engine such as Unity. Unity uses a component pattern for it's
+GameObjects, and it's suggested in many development communities that the
+GetComponent method's return value be cached in a variable if needed multiple
+times due to how expensive it is. This exploration into a potential
+implementation of the method shows how and why it can be so expensive to call,
+and should serve as a reminder to do such caching if you end up implementing a
+component pattern in your own game architecture.
 
 \subsubsection{Usability and Maintainability}
 
@@ -892,6 +985,7 @@ The following sections display the data visualisations for each test run.
 
 \subsection{Architecture D}
 \subsubsection{Performance}
+No performance was measured for this architecture.
 
 \subsubsection{Usability and Maintainability}
 
