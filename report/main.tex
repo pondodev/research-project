@@ -899,6 +899,26 @@ polymorphism. This allows us to simply perform a single loop over the collection
 of entities to achieve the desired functionality in O(n) time.
 
 \subsubsection{Usability and Maintainability}
+This is perhaps the largest drawback to a purely object oriented approach to
+game architecture. The problem is that the paradigm doesn't lend itself entirely
+to how games are generally structured, with what might be considered a many to
+many relationship between entities and traits. That is, many entities may
+have many traits, and many traits may be relevant to many entities. While this
+makes sense in more specific applications such as our entities that can either
+move or move and colour shift, as soon as you start scaling up to larger and
+larger scopes this quickly becomes unfeasible for everything.
+
+To be clear, I don't think this makes it an entirely useless idea to keep in
+mind while designing game architecture--quite the contrary actually. One of the
+core goals of object oriented programming is to reduce code repetition in order
+to increase maintainability of a given codebase. It's for this reason that when
+designing larger, encapsulating aspects of an architecture this way of thinking
+often becomes indispensible. In fact, it's something we see frequently in real
+world applications of component patterns or ECS. This is because of how well it
+lends itself to not specific parts of architecture, but rather the larger
+picture. Add to this that it seems like it can still maintain reasonable
+performance, and it makes for an exceptional candidate for the backbone of
+any other core architecture used for managing entities in a game.
 
 \subsection{Architecture B}
 \subsubsection{Performance}
@@ -1100,8 +1120,6 @@ binary. This generally might not be an issue on modern PCs, but is all the
 same something to consider depending on the application you're writing for
 (eg. if you're writing a demo for some niche hardware then size will become
 very important).
-
-% talk about inlining here too
 
 \subsubsection{Usability and Maintainability}
 
