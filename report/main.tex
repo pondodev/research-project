@@ -997,6 +997,31 @@ and should serve as a reminder to do such caching if you end up implementing a
 component pattern in your own game architecture.
 
 \subsubsection{Usability and Maintainability}
+This is what I would consider the "middle ground" of the two extremes discussed
+in this report. It is still at it's core object oriented, defining an entity as
+an object that has a set of responsibilities. The key difference between this
+and a pure object oriented approach such as what has been seen in Architecture A
+is that the responsibilities are now contained within objects belonging to the
+entity. This still maintains much of what we set out to do with object oriented
+design, but now removes the need for deep inheritance trees for more complex
+entity behaviour. This alone makes the maintainability of the architecture far
+easier, since now there are less opportunities for bugs that may occur through
+deep inheritance trees or multiple inheritance.
+
+Add to this that the extensibility is incredibly simple due to realistically
+only needing to add components to introduce new behaviour. This all makes for
+an incredibly sensible architecture for the way most developers might think
+about a game's logic, in turn making it easy for many to work with. To once
+again analyse this in the context of general purpose engines, it makes sense
+why this is a pattern so often seen in their designs. While it is most certainly
+not the most performant (though as previously mentioned, there are absolutely
+ways in the real world to optimise this) it allows for faster development which
+means faster iteration times. Often this can outweigh the performance cost,
+especially in situations where money is at stake since you want to ensure you
+can iterate quicker to get your product completed sooner. It is also what I
+would describe as being the most general purpose, being excellent for smaller
+sets of entities or even one use entities, but still having the ability to scale
+up to manage larger sets of entities.
 
 \subsection{Architecture C}
 \subsubsection{Performance}
