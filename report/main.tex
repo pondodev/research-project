@@ -1147,12 +1147,103 @@ same something to consider depending on the application you're writing for
 very important).
 
 \subsubsection{Usability and Maintainability}
+At a high level, it can look like there are many parallels with Architecture B
+when it comes to the usability and maintainability. If we wish to add new
+functionality, then all we really need to do is add new components and systems
+to act on them--not dissimilar from how we add functionality through a component
+pattern based architecture. And indeed, compared to something like Architecture
+A I would argue that it is easier to add functionality to, especially at scale.
+The problem, however, lies in the fact that ECS is really designed for large
+scale architectures. The entire idea behind ECS is performance at scale, which
+is something we absolutely see when compared directly against all other
+architectures discussed in this report. When applied to smaller scale
+applications it still absolutely is performant, but it becomes less reasonable
+to maintain. This is because before one is able to create game logic using ECS,
+you must implement the supporting architecture.
+
+Not only this, but since the key advantage it has over it's contemporaries is
+the performance you need to be constantly vigilant of how you've implemented
+features. An excellent example of this lies within an early attempt at
+optimising my implementation using Austin Morlan's solution for ensuring all
+data is tightly packed. In their implementation, they created a template class
+that could hold a generic collection of any type and would always ensure tight
+packing of data\footnote{I won't go into detail here as to how it works for the
+sake of brevity. If you're interested, however, you can find my interpretation
+at https://github.com/pondodev/research-project/blob/a0a75d5856a007baaeec22d9ce82fcad918fb5ee/program/architecture\_c/component\_container.h}.
+In theory this would be an excellent boost to speed since we can now always
+ensure that the data within the collection is tightly packed, allowing us to
+send more data during pre-fetching. However in my testing this ended up making
+my ECS implementation slower than every single other architecture tested, and by
+a very significant margin too. I've some thoughts on why this might have
+happened, but I ultimately think the largest hit to performance is the indexing
+of an unordered map. While it is absolutely possible that we've aided the
+pre-fetching prediction algorithms (though there are some arguments to the
+contrary) there is now added computation time from attempting to index an
+unordered map. In the pursuit of optimising cache usage, we have added an extra
+burden on the CPU which ultimately outweighed what benefits were gained. It's
+this kind of thought and care that is required when writing your own ECS
+implementation that can ultimately make it a hard architecture to write and use,
+at least initially. In theory most of this should be a non-issue once robust
+implementations are in place, but to get to that point is rather difficult.
 
 \subsection{Architecture D}
 \subsubsection{Performance}
 No performance was measured for this architecture.
 
 \subsubsection{Usability and Maintainability}
+Since this is more or less the same as Architecture C, many of the same points
+apply here. There is one very key drawback to this though, and that is the
+complexity introduced through interacting with low level graphics APIs. Being
+as low level as it is, there's already a level of verbosity and technicality
+that makes it difficult to work with unless you have much prior knowledge. For
+example, you have to understand how the OpenGL state machine operates, how
+textures are created/used in the state machine, how to dispatch compute
+programs, how to appropriately designate work group size, how to batch
+dispatches, etc. This is all already rather difficult, but to make matters worse
+you also get very little in the way of feedback from your shader programs bar
+the input and output. It makes for not only a complex architecture, but one that
+is incredibly hard to debug due to the nature of what backs it.
+
+This also feeds into another issue with the usability and maintainability of
+this architecture once we add compute shaders to it. You see, previously we had
+spoken about the kind of challenges one would face when creating and improving
+upon an ECS implementation, and of course the same challenges apply here. There
+is a new challenge that arises however, and is actually what stopped me from
+being able to complete the architecture for this report. There is a long and
+complex set of tasks you need to complete in order to prepare OpenGL to process
+arbitrary data through compute shaders, but of note to us is the preparation of
+input/output buffers and scaling work group sizes during runtime.
+
+There are a variety of methods that one can use to send and retrieve data from
+a compute shader, but for the sake of simplicity I have opted to use textures.
+This is mostly because there are already many abstractions that exist within
+OpenGL to work with textures which makes the writing and blitting to and from
+them incredibly trivial. Textures do however have a maximum size that they can
+be (my running theory is because of 16-bit addressing/indexing, but I can't be
+sure) which means that you can only send so much data at a time to and from the
+GPU. To add to this, compute shaders also suffer from the same problem (again,
+likely because of 16-bit addressing/indexing) when defining work group sizes.
+This does mean that neither one of these aspects limits the other, which is some
+cold comfort, but does mean we now need to implement dynamic batch dispatching.
+
+The idea behind this is simple: dispatch data and the program in subsections of
+the larger data set so that everything can be processed without extending past
+the technical limits of the hardware and software used. Add to this that you
+need to be incredibly smart about what you do/don't do, because most any
+operation in this chain that makes up a compute shader bears a heavy amount of
+overhead. Because of this, if you're not careful then you may end up with worse
+performance, therefore defeating the purpose of implementing compute shaders in
+the first place.
+
+So in summary, the theory tells us that compute shaders should increase
+performance by a significant amount over a traditional CPU implementation.
+Whether or not this is the case, unfortunately I have been unable to test. What
+can be said for certain though is that by introducing compute shaders you
+increase architectural complexity by a very, very significant amount. It's for
+this reason that I see it as a very nuclear solution--that is, it should not be
+your first option. Turn to this if you find that this is the only option left,
+because if you are to delve into this rabbit hole then know that there be
+dragons ahead.
 
 \section{Conclusion}
 
