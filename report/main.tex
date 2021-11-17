@@ -6,7 +6,7 @@
 
 \title{COS30031 Games Programming\\Research Project Report}
 \author{Daniel Coady 102084174}
-\date{18/10/2021}
+\date{17/11/2021}
 
 \begin{document}
 
@@ -45,8 +45,8 @@ architecture is most appropriate to you, your project, and your needs.
 \subsection{Purpose of This Research}
 Using the metrics outlined earlier, I aim to compare and contrast four different
 architectures. This will involve deep dives into every architecture, dissecting
-how all of them work and what their purposes are. My hope is that through this
-research presented in this report, the reader may be able to:
+each of them in a variety of ways. My hope is that through this research
+presented in this report, the reader may be able to:
 
 \begin{itemize}
     \item Understand what each architecture is, and how they work
@@ -219,7 +219,7 @@ Starting with the Entity class in figure \ref{arch_a_entity_header}, it contains
 some basic information required to render a given entity to the provided render
 target--a 2D position, a 2D velocity, and a colour with RGB components. We also
 have some simple getter methods for acquiring the private and protected members
-of the class, and an update method which simply will move the entity's position
+of the class, and an update method which will simply move the entity's position
 by the given velocity vector.
 
 The ColorShiftEntity class in figure \ref{arch_a_color_shift_entity_header} then
@@ -389,7 +389,7 @@ It's simple for the most part, only really providing one getter method for the
 component's id. However one curiosity here is that the method to get the id is
 virtual, but we never override it in any of the classes that derive from it.
 This is due to a quirk of C++ and it's design since type information isn't
-available during run time in the same way we might expect it to be in something
+available during runtime in the same way we might expect it to be in something
 like C\# and it's reflection feature. To get around this, there is RTTI which
 can give us partial information on types during runtime, but it requires us to
 do two things: provide a pointer, and implement at least one virtual method on
@@ -414,7 +414,7 @@ While by no means a new approach to game architecture with uses of it dating
 back to 2001-2003\footnote{http://t-machine.org/index.php/2007/09/03/entity-systems-are-the-future-of-mmog-development-part-1/},
 it is only in recent times where we have seen it truly come into it's own.
 Entity component systems, often shortened down to ECS, are a performance first
-architecture design which foregoes object oriented design in favour of data
+architecture design which foregoes object oriented design in favour of a data
 oriented design. The key difference between the two paradigms is that while
 object oriented design prioritises concepts such as ownership through means of
 abstraction and encapsulation, data oriented design chooses to separate data
@@ -436,7 +436,7 @@ implementation:
             logic and functionality to the components.
 \end{itemize}
 
-\begin{figure}
+\begin{figure}[h]
 \centering
 \begin{BVerbatim}
 typedef uint32_t Entity;
@@ -1041,19 +1041,18 @@ Architecture A, right?
 
 This is where things start to get complicated when talking about time
 complexity measurements, and also serves as a good example of why big O notation
-and other methods of measuring time complexity shouldn't be taken as gospel and
-instead need to be understood in context. You see, in Architecture A we iterate
-over every entity and perform a simple operation on each of them, making the
-execution time O(n). In this architecture we perform two separate O(n) time
-operations one after another, which will then simplify down to completing in
-O(n) time due to both being constant. The difference between the two however is
-what n actually is. In Architecture A n is the number of entities, while in this
-architecture n is both the number of entities registered for the movement system
-and the number of entities registered for the colour shift system. The reason
-why this is important is because in this architecture, n is almost certainly
-going to be bigger than in Architecture A given the same data set. This is due
-to the two systems potentially working on the same entities multiple times for
-different things.
+shouldn't be taken as gospel and instead needs to be understood in context. You
+see, in Architecture A we iterate over every entity and perform a simple
+operation on each of them, making the execution time O(n). In this architecture
+we perform two separate O(n) time operations one after another, which will then
+simplify down to completing in O(n) time due to both being constant. The
+difference between the two however is what n actually is. In Architecture A n is
+the number of entities, while in this architecture n is both the number of
+entities registered for the movement system and the number of entities
+registered for the colour shift system. The reason why this is important is
+because in this architecture, n is almost certainly going to be bigger than in
+Architecture A given the same data set. This is due to the two systems
+potentially working on the same entities multiple times for different things.
 
 So this architecture is slower in absolute terms when looking at the time
 complexity, and yet it's faster than Architecture A. Why is this? This has
@@ -1094,20 +1093,19 @@ and that's cache
 pre-fetching\footnote{This is something that I'm still not entirely clear on. This lecture provided a good starting point however: http://home.eng.iastate.edu/~zzhang/cpre581/lectures/Lecture17-1p.pdf}.
 The reason why this gets so complicated is because of variance in CPUs. You see,
 normally we might talk about how broader architectures differ such as comparing
-x86\_64 (which is mostly used in desktop computers) to the ARM family of
-architectures (which is mostly used in mobile/low power computers). However when
-we start talking about aspects of CPUs that are as low level as how we load data
-into the cache, we then need to start discussing differences in CPU
-manufacturers. You see while the specs of two CPUs, one from Intel and one from
-AMD, might look the same on paper, they can perform wildly different in
-different scenarios. This comes down to the implementation details of a CPU,
-decided by the engineers that designed the CPU. Of interest to us is the
-method of cache pre-fetching, because this indicates to us how we might want
-to write our code in order to make sure that data is reliably dispatched to the
-CPU. Admittedly, this does get into the realm of crazy low level optimisation
-so most programmers will not need to think about this. However, when your
-cache optimisations don't behave as you expect them to then this is something
-that you should bear in mind as a potential reason for the unexpected behaviour.
+x86\_64 to the ARM family of architectures. However when we start talking about
+aspects of CPUs that are as low level as how we load data into the cache, we
+then need to start discussing differences in CPU manufacturers. You see while
+the specs of two CPUs, one from Intel and one from AMD, might look the same on
+paper, they can perform wildly different in different scenarios. This comes down
+to the implementation details of a CPU, decided by the engineers that designed
+the CPU. Of interest to us is the method of cache pre-fetching, because this
+indicates to us how we might want to write our code in order to make sure that
+data is reliably dispatched to the CPU. Admittedly, this does get into the realm
+of crazy low level optimisation so most programmers will not need to think about
+this. However, when your cache optimisations don't behave as you expect them to
+then this is something that you should bear in mind as a potential reason for
+the unexpected behaviour.
 
 A final thing I'll mention is that ECS lends itself particularly well to a
 compiler optimisation called inlining. The idea behind inlining is simple: move
